@@ -231,6 +231,70 @@ button.blue:hover{background:#0369a1}
 
 .prod-label-row{display:flex;align-items:center;gap:5px;margin:10px 0 5px}
 .prod-label-row label{margin:0;display:inline}
+.badge-orden-fila{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:#dbeafe;
+  color:#1e3a8a;
+  border:1px solid #93c5fd;
+  border-radius:999px;
+  padding:1px 8px;
+  font-size:11px;
+  font-weight:800;
+}
+.form-header-tools{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+.form-header-tools h2{margin:0}
+.form-tools-btns{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.form-tools-btns button{
+  margin:0;
+  padding:7px 11px;
+  font-size:12px;
+  min-height:34px;
+}
+.fila-acciones-prod{
+  display:flex;
+  gap:4px;
+  align-items:center;
+  margin-top:26px;
+}
+.fila-acciones-prod button{
+  margin:0;
+  padding:7px 9px;
+  min-height:38px;
+  font-size:13px;
+}
+.btn-orden-fila{
+  background:#e2e8f0;
+  color:#0f172a;
+  border:1px solid #94a3b8;
+}
+.btn-orden-fila:hover{background:#cbd5e1}
+.orden-modal-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  padding:9px 10px;
+  border-bottom:1px solid #e2e8f0;
+  background:#ffffff;
+}
+.orden-modal-item:last-child{border-bottom:0}
+.orden-modal-item.seleccionado-orden{
+  background:#dbeafe;
+  border-left:4px solid #2563eb;
+}
 .prod-ghost-lista{
   margin-top:4px;display:none;flex-direction:column;gap:3px;
 }
@@ -773,7 +837,8 @@ th{background:#eff6ff;color:#0f172a;white-space:nowrap}
   .row{grid-template-columns:1fr 1fr;background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #cbd5e1}
   .row > div:first-child{grid-column:1 / -1}
   .row > div:last-child{grid-column:1 / -1}
-  .row > div:last-child button{width:100%;margin:4px 0 0}
+  .fila-acciones-prod{margin-top:4px;width:100%}
+  .fila-acciones-prod button.red{flex:1}
   .row-pago{grid-template-columns:1fr;background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #cbd5e1}
   .row-pago button{width:100%;margin-top:4px !important}
   .grid-user-form{grid-template-columns:1fr}
@@ -994,7 +1059,13 @@ th{background:#eff6ff;color:#0f172a;white-space:nowrap}
 </section>
 
 <section class="panel form-panel no-print">
+<div class="form-header-tools">
 <h2 id="tituloFormulario">➕ Registrar pedido</h2>
+<div class="form-tools-btns">
+<button type="button" class="blue" id="btnCatalogoPlatosHeader" onclick="abrirModalCatalogo()" title="Guardar platos y categorías (Entrada, Segundo, Bebida, Postre, etc.)">🍽️ Platos / Catálogo</button>
+<button type="button" class="gray" id="btnOrdenarPlatosHeader" onclick="abrirModalOrdenPlatos()" title="Seleccionar y definir el orden en que salen los platos del pedido">🔢 Ordenar platos</button>
+</div>
+</div>
 <div class="cliente-label-row">
 <label for="cliente">Nombre del cliente</label>
 <button type="button" class="btn-lapiz-cliente" id="btnAbrirClientes" onclick="abrirModalClientes()" title="Administrar clientes guardados (Nombre, Apellido, DNI, Teléfono)">✏️</button>
@@ -1066,6 +1137,23 @@ th{background:#eff6ff;color:#0f172a;white-space:nowrap}
 <section class="print-only" id="ticket"></section>
 
 </main>
+
+<!-- Modal para Definir Orden de Platos del Pedido -->
+<div id="modalOrdenPlatos" class="modal-overlay">
+<div class="modal-content">
+<h3>🔢 Orden de los platos del pedido</h3>
+<p class="muted" style="margin-top:0">Selecciona los platos en el orden que deseas (1°, 2°, 3°...) o usa ↑ / ↓. Al aplicar, se reflejará de inmediato en el pedido.</p>
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+<button type="button" class="gray" style="margin:0;padding:6px 10px;font-size:12px;min-height:32px;" onclick="reiniciarSeleccionOrdenPlatos()">↺ Reiniciar selección</button>
+<button type="button" class="blue" style="margin:0;padding:6px 10px;font-size:12px;min-height:32px;" onclick="ordenarPorCategoriaTipica()">🍽️ Orden Entrada → Segundo → Bebida → Postre</button>
+</div>
+<div id="listaOrdenPlatosModal" style="max-height:280px;overflow-y:auto;border:1px solid #cbd5e1;border-radius:8px;margin-bottom:14px;background:#ffffff;"></div>
+<div style="display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap;">
+<button type="button" class="gray" style="margin:0;" onclick="cerrarModalOrdenPlatos()">Cancelar</button>
+<button type="button" class="green" style="margin:0;" onclick="aplicarOrdenPlatosDesdeModal()">✓ Aplicar orden al pedido</button>
+</div>
+</div>
+</div>
 
 <!-- Modal de Gestión de Clientes Frecuentes -->
 <div id="modalClientes" class="modal-overlay">
@@ -1217,7 +1305,9 @@ const categoriasPorDefecto = ["Entrada", "Segundo", "Táper", "Bebida", "Postre"
 const catalogoPorDefecto = [
   { id: "prod_sopa", nombre: "Sopa", categoria: "Entrada", precio: 5 },
   { id: "prod_ensalada", nombre: "Ensalada", categoria: "Entrada", precio: 4 },
-  { id: "prod_arroz_pollo", nombre: "Arroz con pollo", categoria: "Segundo", precio: 10 }
+  { id: "prod_arroz_pollo", nombre: "Arroz con pollo", categoria: "Segundo", precio: 10 },
+  { id: "prod_chicha", nombre: "Chicha morada", categoria: "Bebida", precio: 3 },
+  { id: "prod_mazamorra", nombre: "Mazamorra morada", categoria: "Postre", precio: 4 }
 ];
 
 let datos = {};
@@ -1288,7 +1378,7 @@ function configurarPWA(){
 let categoriasDB = (() => {
   try{
     const parsed = JSON.parse(localStorage.getItem(claveCategoriasDB) || "null");
-    if(Array.isArray(parsed) && parsed.length) return parsed;
+    if(Array.isArray(parsed) && parsed.length) return fusionarCategorias([], parsed);
   }catch(e){}
   return [...categoriasPorDefecto];
 })();
@@ -1316,7 +1406,7 @@ function obtenerCategoriasActivas(){
   if(Array.isArray(categoriasDB) && categoriasDB.length){
     return categoriasDB;
   }
-  return ["Otro"];
+  return [...categoriasPorDefecto];
 }
 
 function fusionarCategorias(localCats, remoteCats){
@@ -1331,7 +1421,8 @@ function fusionarCategorias(localCats, remoteCats){
       merged.push(clean);
     }
   };
-  (Array.isArray(remoteCats) && remoteCats.length ? remoteCats : categoriasPorDefecto).forEach(addCat);
+  categoriasPorDefecto.forEach(addCat);
+  (Array.isArray(remoteCats) ? remoteCats : []).forEach(addCat);
   (Array.isArray(localCats) ? localCats : []).forEach(addCat);
   return merged.length ? merged : ["Otro"];
 }
@@ -1361,6 +1452,138 @@ function refrescarSelectsCategoriasEnFormulario(categoriaPreferida = null){
     sel.innerHTML = opciones.map(c => `<option value="${esc(c)}" ${c === actual ? "selected" : ""}>${esc(c)}</option>`).join("");
   });
 }
+
+function actualizarNumeracionFilasProducto(){
+  const filas = [...document.querySelectorAll("#productos .producto")];
+  filas.forEach((fila, idx) => {
+    const badge = fila.querySelector(".badge-orden-fila");
+    if(badge) badge.textContent = `#${idx + 1}`;
+    const btnUp = fila.querySelector(".btn-subir-fila");
+    const btnDown = fila.querySelector(".btn-bajar-fila");
+    if(btnUp) btnUp.disabled = idx === 0;
+    if(btnDown) btnDown.disabled = idx === filas.length - 1;
+  });
+}
+
+window.moverFilaProducto = function(btn, delta){
+  const fila = btn && btn.closest(".producto");
+  const cont = $("productos");
+  if(!fila || !cont) return;
+  if(delta < 0 && fila.previousElementSibling){
+    cont.insertBefore(fila, fila.previousElementSibling);
+  } else if(delta > 0 && fila.nextElementSibling){
+    cont.insertBefore(fila.nextElementSibling, fila);
+  }
+  actualizarNumeracionFilasProducto();
+};
+
+let listaOrdenModalActual = [];
+let ordenSeleccionadoClicks = [];
+
+function obtenerFilasParaOrdenModal(){
+  return [...document.querySelectorAll("#productos .producto")].map((fila, idx) => ({
+    filaId: fila.getAttribute("data-fila-id"),
+    nombre: (fila.querySelector(".nombre")?.value || "").trim() || `(Plato sin nombre #${idx + 1})`,
+    categoria: fila.querySelector(".categoria")?.value || "Entrada",
+    cantidad: Number(fila.querySelector(".cantidad")?.value) || 1,
+    precio: Number(fila.querySelector(".precio")?.value) || 0
+  }));
+}
+
+window.abrirModalOrdenPlatos = function(){
+  const d = dia();
+  if(d.cerrado) return;
+  const filas = obtenerFilasParaOrdenModal();
+  if(filas.length < 2){
+    alert("Añade al menos 2 platos en el pedido para ordenar su secuencia.");
+    return;
+  }
+  listaOrdenModalActual = filas;
+  ordenSeleccionadoClicks = [];
+  renderListaOrdenPlatosModal();
+  $("modalOrdenPlatos").style.display = "flex";
+};
+
+window.cerrarModalOrdenPlatos = function(){
+  $("modalOrdenPlatos").style.display = "none";
+};
+
+window.reiniciarSeleccionOrdenPlatos = function(){
+  ordenSeleccionadoClicks = [];
+  renderListaOrdenPlatosModal();
+};
+
+window.ordenarPorCategoriaTipica = function(){
+  const prioridad = { "entrada": 1, "segundo": 2, "táper": 3, "taper": 3, "bebida": 4, "postre": 5, "otro": 6 };
+  listaOrdenModalActual.sort((a, b) => {
+    const pa = prioridad[String(a.categoria || "").trim().toLowerCase()] || 99;
+    const pb = prioridad[String(b.categoria || "").trim().toLowerCase()] || 99;
+    return pa - pb;
+  });
+  ordenSeleccionadoClicks = listaOrdenModalActual.map(item => item.filaId);
+  renderListaOrdenPlatosModal();
+};
+
+window.toggleSeleccionOrdenItem = function(filaId){
+  const pos = ordenSeleccionadoClicks.indexOf(filaId);
+  if(pos !== -1){
+    ordenSeleccionadoClicks.splice(pos, 1);
+  } else {
+    ordenSeleccionadoClicks.push(filaId);
+    const idxActual = listaOrdenModalActual.findIndex(x => x.filaId === filaId);
+    const destinoIdx = ordenSeleccionadoClicks.length - 1;
+    if(idxActual !== -1 && destinoIdx !== idxActual){
+      const [movido] = listaOrdenModalActual.splice(idxActual, 1);
+      listaOrdenModalActual.splice(destinoIdx, 0, movido);
+    }
+  }
+  renderListaOrdenPlatosModal();
+};
+
+window.moverItemModalOrden = function(index, delta, event){
+  if(event) event.stopPropagation();
+  const nuevoIdx = index + delta;
+  if(nuevoIdx < 0 || nuevoIdx >= listaOrdenModalActual.length) return;
+  const [movido] = listaOrdenModalActual.splice(index, 1);
+  listaOrdenModalActual.splice(nuevoIdx, 0, movido);
+  renderListaOrdenPlatosModal();
+};
+
+function renderListaOrdenPlatosModal(){
+  const cont = $("listaOrdenPlatosModal");
+  if(!cont) return;
+  cont.innerHTML = listaOrdenModalActual.map((item, idx) => {
+    const posSel = ordenSeleccionadoClicks.indexOf(item.filaId);
+    const seleccionado = posSel !== -1;
+    const numMostrar = seleccionado ? posSel + 1 : idx + 1;
+    return `
+      <div class="orden-modal-item ${seleccionado ? "seleccionado-orden" : ""}" style="cursor:pointer;" onclick="toggleSeleccionOrdenItem('${esc(item.filaId)}')">
+        <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:180px;">
+          <span class="badge-orden-fila" style="font-size:12px;padding:3px 9px;">${seleccionado ? `✓ #${numMostrar}` : `#${numMostrar}`}</span>
+          <div>
+            <strong style="font-size:14px;color:#0f172a;">${item.cantidad} × ${esc(item.nombre)}</strong>
+            <div style="font-size:12px;color:#475569;">${esc(item.categoria)} · ${dinero(item.precio)}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:4px;">
+          <button type="button" class="btn-orden-fila" style="margin:0;padding:5px 9px;min-height:32px;" ${idx === 0 ? "disabled" : ""} onclick="moverItemModalOrden(${idx}, -1, event)">↑</button>
+          <button type="button" class="btn-orden-fila" style="margin:0;padding:5px 9px;min-height:32px;" ${idx === listaOrdenModalActual.length - 1 ? "disabled" : ""} onclick="moverItemModalOrden(${idx}, 1, event)">↓</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+window.aplicarOrdenPlatosDesdeModal = function(){
+  const cont = $("productos");
+  if(!cont) return;
+  listaOrdenModalActual.forEach(item => {
+    const filaEl = cont.querySelector(`.producto[data-fila-id="${item.filaId}"]`);
+    if(filaEl) cont.appendChild(filaEl);
+  });
+  actualizarNumeracionFilasProducto();
+  cerrarModalOrdenPlatos();
+};
 
 function construirHtmlVentanaCatalogo(payload){
   const jsonPayload = JSON.stringify(payload).replace(/</g, "\\u003c");
@@ -1410,7 +1633,7 @@ function construirHtmlVentanaCatalogo(payload){
     "<header>",
     "  <div>",
     "    <h1>🍽️ Catálogo de Productos y Categorías</h1>",
-    "    <p>Agrega, edita o filtra rápido tus comidas por categoría y nombre</p>",
+    "    <p>Agrega, edita o filtra rápido tus comidas por categoría (Entrada, Segundo, Bebida, Postre, etc.)</p>",
     "  </div>",
     "  <button type=\"button\" class=\"gray\" onclick=\"window.close()\">✕ Cerrar ventana</button>",
     "</header>",
@@ -1419,7 +1642,7 @@ function construirHtmlVentanaCatalogo(payload){
     "    <h2>📂 Categorías</h2>",
     "    <div id=\"chipsCats\" class=\"cat-chips\"></div>",
     "    <div style=\"display:flex;gap:8px;flex-wrap:wrap;\">",
-    "      <input type=\"text\" id=\"inpNuevaCat\" placeholder=\"Nueva categoría (ej. Entrada, Segundo, Bebida, Extra)\" style=\"flex:1;min-width:200px;\">",
+    "      <input type=\"text\" id=\"inpNuevaCat\" placeholder=\"Nueva categoría (ej. Entrada, Segundo, Bebida, Postre, Extra)\" style=\"flex:1;min-width:200px;\">",
     "      <button type=\"button\" id=\"btnAddCat\">+ Agregar categoría</button>",
     "    </div>",
     "  </section>",
@@ -1470,7 +1693,7 @@ function construirHtmlVentanaCatalogo(payload){
     "const initData = " + jsonPayload + ";",
     "const claveCats = \"kimsa_categorias_db_v1\";",
     "const claveProds = \"kimsa_catalogo_prod_db_v1\";",
-    "let categorias = Array.isArray(initData.categorias) && initData.categorias.length ? initData.categorias.slice() : [\"Entrada\", \"Segundo\", \"Otro\"];",
+    "let categorias = Array.isArray(initData.categorias) && initData.categorias.length ? initData.categorias.slice() : [\"Entrada\", \"Segundo\", \"Táper\", \"Bebida\", \"Postre\", \"Otro\"];",
     "let productos = Array.isArray(initData.productos) ? initData.productos.slice() : [];",
     "let editIndex = -1;",
     "let docRef = null;",
@@ -1650,7 +1873,8 @@ window.recibirActualizacionCatalogoVentana = function(nuevasCats, nuevosProds, i
   if(itemSeleccionado){
     let fila = filaIdObjetivo ? document.querySelector(`.producto[data-fila-id="${filaIdObjetivo}"]`) : null;
     if(!fila){
-      fila = document.querySelector("#productos .producto:last-child");
+      const filasVacias = [...document.querySelectorAll("#productos .producto")].filter(f => !(f.querySelector(".nombre")?.value || "").trim());
+      fila = filasVacias[0] || null;
     }
     if(!fila){
       agregarFilaProducto();
@@ -3598,8 +3822,8 @@ function renderModoTV(){
     }
 
     const horaEntradaTxt = formatearHoraIngreso(p.creadoEnMs || p.id);
-    const itemsHtml = (p.productos || []).map(x =>
-      `<div>${x.cantidad} × ${esc(x.nombre)} (${esc(x.categoria)})</div>`
+    const itemsHtml = (p.productos || []).map((x, idxItem) =>
+      `<div>${idxItem + 1}. ${x.cantidad} × ${esc(x.nombre)} (${esc(x.categoria)})</div>`
     ).join("");
 
     return `
@@ -3907,8 +4131,9 @@ window.agregarFilaProducto = function(nombre="", categoria=null, cantidad=1, pre
   div.innerHTML = `
     <div>
       <div class="prod-label-row">
+        <span class="badge-orden-fila">#1</span>
         <label>Producto</label>
-        <button type="button" class="btn-lapiz-cliente btn-lapiz-catalogo" title="Gestionar categorías y productos (precios y autocompletado)">✏️</button>
+        <button type="button" class="btn-lapiz-cliente btn-lapiz-catalogo" title="Guardar o elegir platos y categorías (Entrada, Segundo, Bebida, Postre, etc.)">✏️</button>
       </div>
       <input class="nombre" value="${esc(nombre)}" placeholder="Escribe producto (ej. sopa, arroz con pollo)" autocomplete="off">
       <div class="prod-ghost-lista"></div>
@@ -3920,7 +4145,11 @@ window.agregarFilaProducto = function(nombre="", categoria=null, cantidad=1, pre
     </div>
     <div><label>Cantidad</label><input class="cantidad" type="number" enterkeyhint="next" inputmode="numeric" min="1" value="${cantidad}" oninput="calcularVueltoEnVivo()"></div>
     <div><label>Precio unit.</label><input class="precio" type="number" enterkeyhint="next" inputmode="decimal" min="0" step=".01" value="${precio}" placeholder="0.00" oninput="calcularVueltoEnVivo()"></div>
-    <div><button class="red" style="margin-top:26px" onclick="this.closest('.producto').remove(); calcularVueltoEnVivo();">Quitar</button></div>
+    <div class="fila-acciones-prod">
+      <button type="button" class="btn-orden-fila btn-subir-fila" title="Subir orden del plato" onclick="moverFilaProducto(this, -1)">↑</button>
+      <button type="button" class="btn-orden-fila btn-bajar-fila" title="Bajar orden del plato" onclick="moverFilaProducto(this, 1)">↓</button>
+      <button type="button" class="red" onclick="this.closest('.producto').remove(); actualizarNumeracionFilasProducto(); calcularVueltoEnVivo();">Quitar</button>
+    </div>
   `;
 
   const btnLapiz = div.querySelector(".btn-lapiz-catalogo");
@@ -3948,6 +4177,7 @@ window.agregarFilaProducto = function(nombre="", categoria=null, cantidad=1, pre
           const todasFilas = document.querySelectorAll("#productos .producto");
           if(todasFilas.length > 1){
             div.remove();
+            actualizarNumeracionFilasProducto();
             calcularVueltoEnVivo();
           }
           let primerPagoInput = document.querySelector("#pagos .pago-item .pago-con");
@@ -4020,6 +4250,7 @@ window.agregarFilaProducto = function(nombre="", categoria=null, cantidad=1, pre
   }
 
   $("productos").appendChild(div);
+  actualizarNumeracionFilasProducto();
   if(nombre){
     actualizarSugerenciaProductoFila(inpNombre);
   }
@@ -4507,7 +4738,7 @@ window.ejecutarExportacionExcel = function(){
 
     const filasPedidosHtml = (d.pedidos && d.pedidos.length)
       ? d.pedidos.map((p, pIdx) => {
-          const prodStr = p.productos.map(prod => `${prod.cantidad}x ${prod.nombre} (${prod.categoria})`).join(" | ");
+          const prodStr = p.productos.map((prod, iProd) => `${iProd + 1}. ${prod.cantidad}x ${prod.nombre} (${prod.categoria})`).join(" | ");
           const pagosConVuelto = formatearPagosConVuelto(p);
           return `
             <tr style="background:${pIdx % 2 === 0 ? '#ffffff' : '#f8fafc'};">
@@ -4687,7 +4918,7 @@ window.ejecutarExportacionPDF = function(){
         p.cliente,
         cliDatos.dni,
         cliDatos.telefono,
-        p.productos.map(prod => `${prod.cantidad}x ${prod.nombre} (${prod.categoria})`).join("\n"),
+        p.productos.map((prod, iProd) => `${iProd + 1}. ${prod.cantidad}x ${prod.nombre} (${prod.categoria})`).join("\n"),
         p.observacion || "-",
         p.estado,
         pagosDetalle,
@@ -4935,9 +5166,13 @@ function actualizar(){
 
   renderDispositivosYRegistroDia(d);
 
-  document.querySelectorAll(".form-panel input, .form-panel select, .form-panel button:not(#btnCancelarEdicion):not(#btnAbrirClientes):not(.btn-lapiz-catalogo)").forEach(x => {
-    if(x.id !== "btnCancelarEdicion" && x.id !== "btnAbrirClientes") x.disabled = d.cerrado;
+  document.querySelectorAll(".form-panel input, .form-panel select, .form-panel button:not(#btnCancelarEdicion):not(#btnAbrirClientes):not(#btnCatalogoPlatosHeader):not(.btn-lapiz-catalogo)").forEach(x => {
+    if(x.id !== "btnCancelarEdicion" && x.id !== "btnAbrirClientes" && x.id !== "btnCatalogoPlatosHeader") x.disabled = d.cerrado;
   });
+
+  if(!d.cerrado){
+    actualizarNumeracionFilasProducto();
+  }
 
   $("listaPedidos").innerHTML = "";
   $("vacio").style.display = d.pedidos.length ? "none" : "block";
@@ -4951,9 +5186,9 @@ function actualizar(){
     strong.textContent = `#${index + 1} - ${p.cliente}`;
     td.append(strong);
 
-    p.productos.forEach(x => {
+    p.productos.forEach((x, idxProd) => {
       const div = document.createElement("div");
-      div.textContent = `${x.cantidad} × ${x.nombre} (${x.categoria})`;
+      div.textContent = `${idxProd + 1}. ${x.cantidad} × ${x.nombre} (${x.categoria})`;
       td.append(div);
     });
 
@@ -4992,313 +5227,290 @@ function actualizar(){
     const total = document.createElement("td");
     total.className = "total-celda";
     total.setAttribute("data-label", "Total");
-    total.style.whiteSpace = "nowrap";
     total.textContent = dinero(p.total);
 
-    const estado = document.createElement("td");
-    estado.setAttribute("data-label", "Estado");
-    estado.textContent = p.estado;
+    const est = document.createElement("td");
+    est.setAttribute("data-label", "Estado");
+    const pagadoOk = pedidoEstaPagadoCompleto(p);
+    const faltaMonto = calcularSaldoPendientePedido(p);
+    est.innerHTML = `
+      <div>${esc(p.estado)}</div>
+      <div style="margin-top:4px;font-size:12px;font-weight:bold;color:${pagadoOk ? '#15803d' : '#b83c42'};">
+        ${pagadoOk ? '✅ Pagado' : '⚠️ Falta pagar: ' + dinero(faltaMonto)}
+      </div>
+    `;
 
-    const accion = document.createElement("td");
-    accion.className = "no-print";
+    const acc = document.createElement("td");
+    acc.className = "no-print";
+
     const divAcciones = document.createElement("div");
     divAcciones.className = "acciones-pedido";
 
-    const imprimirBtn = document.createElement("button");
-    imprimirBtn.className = "green";
-    imprimirBtn.textContent = "🖨️ Imprimir";
-    imprimirBtn.onclick = () => imprimirPedido(p.id);
-    divAcciones.append(imprimirBtn);
+    const btnEstado = document.createElement("button");
+    btnEstado.className = p.estado === "Entregado" ? "gray" : "green";
+    btnEstado.textContent = p.estado === "Entregado" ? "Pendiente" : "Entregado";
+    btnEstado.disabled = d.cerrado;
+    btnEstado.onclick = () => cambiarEstado(p.id);
 
-    const yaEstaEnTV = !estaOcultoEnTV(p.id);
-    const mandarTVBtn = document.createElement("button");
-    mandarTVBtn.className = yaEstaEnTV ? "gray" : "blue";
-    mandarTVBtn.textContent = yaEstaEnTV ? "📺 Ya en TV" : "📺 Mandar a TV";
-    mandarTVBtn.disabled = yaEstaEnTV;
-    mandarTVBtn.title = yaEstaEnTV ? "Este pedido ya está en la pantalla TV" : "Volver a enviar este pedido a la pantalla TV";
-    mandarTVBtn.onclick = () => mandarPedidoATV(p.id);
-    divAcciones.append(mandarTVBtn);
+    const btnEditar = document.createElement("button");
+    btnEditar.className = "blue";
+    btnEditar.textContent = "✏️ Editar";
+    btnEditar.disabled = d.cerrado;
+    btnEditar.onclick = () => cargarPedidoParaEditar(p.id);
 
-    if(!d.cerrado){
-      const editarBtn = document.createElement("button");
-      editarBtn.className = "gray";
-      editarBtn.textContent = "✏️ Editar";
-      editarBtn.onclick = () => cargarPedidoParaEditar(p.id);
-      divAcciones.append(editarBtn);
+    const btnTicket = document.createElement("button");
+    btnTicket.className = "gray";
+    btnTicket.textContent = "🖨️ Ticket";
+    btnTicket.onclick = () => imprimirPedido(p.id);
 
-      const b = document.createElement("button");
-      b.className = "gray";
-      b.textContent = p.estado === "Entregado" ? "Pendiente" : "Entregar";
-      b.onclick = () => cambiarEstado(p.id);
-      divAcciones.append(b);
+    const btnEnviarTV = document.createElement("button");
+    const ocultoEnTV = estaOcultoEnTV(p.id);
+    btnEnviarTV.className = ocultoEnTV ? "blue" : "gray";
+    btnEnviarTV.textContent = ocultoEnTV ? "📺 Mandar a TV" : "📺 En TV";
+    btnEnviarTV.title = ocultoEnTV ? "Volver a mostrar este pedido en Modo TV" : "Este pedido ya se muestra en Modo TV";
+    btnEnviarTV.onclick = () => mandarPedidoATV(p.id);
 
-      const del = document.createElement("button");
-      del.className = "red";
-      del.textContent = "Eliminar";
-      del.onclick = () => eliminarPedido(p.id);
-      divAcciones.append(del);
-    }
+    const btnEliminar = document.createElement("button");
+    btnEliminar.className = "red";
+    btnEliminar.textContent = "Eliminar";
+    btnEliminar.disabled = d.cerrado;
+    btnEliminar.onclick = () => eliminarPedido(p.id);
 
-    accion.append(divAcciones);
-    tr.append(td, total, estado, accion);
+    divAcciones.append(btnEstado, btnEditar, btnTicket, btnEnviarTV, btnEliminar);
+    acc.append(divAcciones);
+    tr.append(td, total, est, acc);
     $("listaPedidos").append(tr);
   });
 
-  renderModoTV();
-
-  const contenedorHistorial = $("historial");
-  contenedorHistorial.innerHTML = "";
-  const llavesFechas = Object.keys(datos).sort().reverse();
-
-  if(!llavesFechas.length){
-    contenedorHistorial.innerHTML = '<div class="muted">Todavía no hay días anteriores.</div>';
+  const hist = $("historial");
+  hist.innerHTML = "";
+  const fechas = Object.keys(datos).sort().reverse();
+  if(!fechas.length){
+    hist.textContent = "Todavía no hay días anteriores.";
   } else {
-    llavesFechas.forEach(fecha => {
-      const dHistorial = datos[fecha];
-      const divItem = document.createElement("div");
-      divItem.className = "history-item";
-      const estadoTexto = dHistorial.cerrado ? "CERRADO" : "ABIERTO";
-      const respHistorial = obtenerTextoResponsables(dHistorial);
+    fechas.forEach(f => {
+      const fila = document.createElement("div");
+      fila.className = "history-item";
 
-      const bDia = document.createElement("button");
-      bDia.className = "btn-dia";
-      bDia.textContent = `${formatearFecha(fecha)} · ${respHistorial} · ${dHistorial.pedidos.length} pedidos · ${dinero(totalDia(dHistorial))} · ${estadoTexto}`;
-      bDia.onclick = () => {
-        $("fecha").value = fecha;
-        cancelarEdicion();
-        actualizar();
-      };
+      const btnDia = document.createElement("button");
+      btnDia.className = "btn-dia";
+      const textoEncargados = obtenerTextoResponsables(datos[f]);
+      const fechaMostrar = formatearFecha(f);
+      const estadoDia = datos[f].cerrado ? "CERRADO" : "ABIERTO";
 
-      const bExcel = document.createElement("button");
-      bExcel.className = "green";
-      bExcel.textContent = "📊";
-      bExcel.style.margin = "0";
-      bExcel.onclick = () => abrirModalExcel(fecha);
+      btnDia.innerHTML = `<strong>${esc(fechaMostrar)} · ${esc(estadoDia)}</strong><br><span class="muted">${esc(textoEncargados)} · ${datos[f].pedidos.length} pedidos · ${dinero(totalDia(datos[f]))}</span>`;
+      btnDia.onclick = () => { $("fecha").value = f; cancelarEdicion(); actualizar(); };
 
-      const bDel = document.createElement("button");
-      bDel.className = "red";
-      bDel.textContent = "🗑️";
-      bDel.style.margin = "0";
-      bDel.onclick = () => eliminarDia(fecha);
+      const btnExcel = document.createElement("button");
+      btnExcel.className = "green";
+      btnExcel.style.cssText = "padding:8px 12px;margin:0;min-height:40px;";
+      btnExcel.textContent = "📥 Reporte";
+      btnExcel.onclick = () => abrirModalExcel(f);
 
-      divItem.append(bDia, bExcel, bDel);
-      contenedorHistorial.appendChild(divItem);
+      const btnDel = document.createElement("button");
+      btnDel.className = "red";
+      btnDel.style.cssText = "padding:8px 12px;margin:0;min-height:40px;";
+      btnDel.textContent = "🗑️ Eliminar";
+      btnDel.onclick = () => eliminarDia(f);
+
+      fila.append(btnDia, btnExcel, btnDel);
+      hist.append(fila);
     });
   }
 
   renderPapeleraDias();
+  renderModoTV();
+}
+
+function ejecutarImpresionTicket(htmlTicket){
+  const ticketEl = $("ticket");
+  if(!ticketEl) return;
+
+  ticketEl.innerHTML = htmlTicket;
+
+  let previo = $("vistaPreviaImpresion");
+  if(!previo){
+    previo = document.createElement("div");
+    previo.id = "vistaPreviaImpresion";
+    previo.className = "modal-overlay no-print";
+    previo.style.zIndex = "9999";
+    previo.innerHTML = `
+      <div class="modal-content" style="max-width:390px;background:#ffffff;color:#0f172a;border:2px solid #0f172a;">
+        <h3 style="margin-top:0;color:#0f172a;">🖨️ Vista previa de Ticket</h3>
+        <div id="vistaPreviaCuerpo" style="background:#ffffff;color:#000000;border:2px dashed #0f172a;padding:12px;border-radius:8px;max-height:58vh;overflow-y:auto;"></div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap;">
+          <button type="button" class="gray" id="btnCerrarVistaPrevia" style="margin:0;">Cerrar</button>
+          <button type="button" class="green" id="btnImprimirVistaPrevia" style="margin:0;">🖨️ Imprimir ahora</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(previo);
+    $("btnCerrarVistaPrevia").onclick = () => {
+      previo.style.display = "none";
+    };
+    $("btnImprimirVistaPrevia").onclick = () => {
+      previo.style.display = "none";
+      setTimeout(() => {
+        try { window.focus(); } catch(e){}
+        window.print();
+      }, 150);
+    };
+  }
+
+  $("vistaPreviaCuerpo").innerHTML = htmlTicket;
+  previo.style.display = "flex";
+
+  setTimeout(() => {
+    try { window.focus(); } catch(e){}
+    window.print();
+  }, 150);
 }
 
 window.imprimirPedido = function(id){
+  const f = $("fecha").value;
   const d = dia();
-  const index = d.pedidos.findIndex(x => x.id === id);
-  const p = d.pedidos[index];
+  const p = d.pedidos.find(x => x.id === id);
   if(!p) return;
 
-  const vueltoCalculado = calcularVueltoPedido(p);
-  const pendienteCalculado = calcularSaldoPendientePedido(p);
+  const numeroOrden = d.pedidos.findIndex(x => x.id === id) + 1;
+  const vuelto = calcularVueltoPedido(p);
+  const pendiente = calcularSaldoPendientePedido(p);
 
-  let html = `
-    <div style="font-family:Arial,sans-serif;font-size:12px;width:100%;color:#000;line-height:1.4">
-      <div style="text-align:center;margin-bottom:8px">
-        <strong style="font-size:16px">KIMSA RESTAURANTE</strong><br>
-        <strong style="font-size:13px; margin-top:4px; display:inline-block;">TICKET DE PEDIDO #${index + 1}</strong>
-      </div>
-      <hr style="margin:6px 0;border:0.5px dashed #000;">
-      <div style="margin:6px 0">
-        <strong>FECHA/HORA:</strong> ${formatearFechaHora(p.id)}<br>
-        <strong>CLIENTE:</strong> ${esc(p.cliente)}<br>
-        <strong>ATENDIDO POR:</strong> ${esc(obtenerTextoResponsables(d))}
-      </div>
-      <hr style="margin:6px 0;border:0.5px dashed #000;">
-      <strong>DETALLE:</strong>
-      <div style="margin-top:6px">
-        ${p.productos.map(x => `<div>${x.cantidad} x ${esc(x.nombre)} (${esc(x.categoria)}) - ${dinero(x.subtotal)}</div>`).join("")}
-      </div>
-      <hr style="margin:6px 0;border:0.5px dashed #000;">
-      <strong>PAGOS:</strong>
-      <div style="margin:6px 0">
-        ${p.pagos && p.pagos.length
-          ? p.pagos.map(pg => `<div>${esc(pg.metodo)}: ${dinero(pg.pagaCon || pg.monto)}</div>`).join("") +
-            (pendienteCalculado > 0
-              ? `<div><strong>FALTA PAGAR: ${dinero(pendienteCalculado)}</strong></div>`
-              : `<div><strong>PAGADO</strong></div><div><strong>Vuelto: ${dinero(vueltoCalculado)}</strong></div>`)
-          : `<div><strong>FALTA PAGAR: ${dinero(p.total)}</strong></div>`}
-      </div>
-      <hr style="margin:6px 0;border:0.5px dashed #000;">
-      <div style="text-align:right;font-size:15px;margin:6px 0"><strong>TOTAL: ${dinero(p.total)}</strong></div>
-      <div style="text-align:center;margin:6px 0"><strong>ESTADO: ${esc(p.estado.toUpperCase())}</strong></div>
-      ${p.observacion ? `<hr style="margin:6px 0;border:0.5px dashed #000;"><div style="text-align:center"><strong>Obs:</strong> ${esc(p.observacion)}</div>` : ""}
-    </div>
-  `;
-  mostrarConVistaPrevia(html);
+  const html = `<div style="font-family:monospace;max-width:300px;margin:auto;line-height:1.45;font-size:13px;color:#000000;background:#ffffff;">
+    <h3 style="text-align:center;margin:0;color:#000000;">KIMSA RESTAURANTE</h3>
+    <div style="text-align:center;font-size:12px;margin-bottom:4px;color:#000000;">PEDIDO #${numeroOrden}</div>
+    <hr style="border:0;border-top:1px dashed #000000;">
+    <div>Fecha: ${esc(formatearFecha(f))}</div>
+    <div>Cliente: <strong>${esc(p.cliente)}</strong></div>
+    ${p.creadoPor ? `<div>Atendió: ${esc(p.creadoPor)}</div>` : ''}
+    <hr style="border:0;border-top:1px dashed #000000;">
+    ${p.productos.map((x, iProd) => `<div style="margin-bottom:4px;">${iProd + 1}. <strong>${x.cantidad}x ${esc(x.nombre)}</strong><br><small style="color:#000000;">(${esc(x.categoria)}) - ${dinero(x.subtotal)}</small></div>`).join("")}
+    <hr style="border:0;border-top:1px dashed #000000;">
+    <div style="font-size:15px;"><strong>TOTAL A PAGAR: ${dinero(p.total)}</strong></div>
+    ${p.pagos && p.pagos.length ? `
+      <div style="margin-top:4px;"><strong>PAGOS:</strong></div>
+      ${p.pagos.map(pg => `<div>- ${esc(pg.metodo)}: ${dinero(pg.pagaCon || pg.monto)}</div>`).join("")}
+      ${pendiente > 0
+        ? `<div style="font-size:14px;"><strong>FALTA PAGAR: ${dinero(pendiente)}</strong></div>`
+        : `<div style="font-size:14px;"><strong>ESTADO PAGO: PAGADO</strong></div><div><strong>Vuelto: ${dinero(vuelto)}</strong></div>`
+      }
+    ` : `<div><strong>FALTA PAGAR: ${dinero(p.total)} (No pagó)</strong></div>`}
+    ${p.observacion ? `<hr style="border:0;border-top:1px dashed #000000;"><div>Obs: ${esc(p.observacion)}</div>` : ''}
+    <hr style="border:0;border-top:1px dashed #000000;">
+    <div style="text-align:center;font-size:12px;margin-top:6px;">¡Gracias por su preferencia!</div>
+  </div>`;
+
+  ejecutarImpresionTicket(html);
 };
 
 window.imprimir = function(){
-  const d = dia(), f = $("fecha").value;
-  const catsActivas = obtenerCategoriasActivas();
-  let totalesPagos = {};
-  d.pedidos.forEach(p => {
-    if(p.pagos) p.pagos.forEach(pg => { totalesPagos[pg.metodo] = (totalesPagos[pg.metodo] || 0) + pg.monto; });
-  });
-
-  const deudoresLista = [];
-  d.pedidos.forEach((p, idx) => {
-    const pendiente = calcularSaldoPendientePedido(p);
-    if(pendiente > 0){
-      deudoresLista.push({
-        numero: idx + 1,
-        cliente: p.cliente,
-        pendiente,
-        pagado: calcularMontoPagadoPedido(p),
-        total: Number(p.total) || 0
-      });
+  const f = $("fecha").value;
+  const d = dia();
+  let resumenCategoriasHtml = "";
+  obtenerCategoriasActivas().forEach(cat => {
+    const cant = totalCategoria(d, cat);
+    if(cant > 0){
+      resumenCategoriasHtml += `<div>${esc(cat)}: ${cant}</div>`;
     }
   });
-  const totalPendienteCobrar = deudoresLista.reduce((s, item) => s + item.pendiente, 0);
+  if(!resumenCategoriasHtml){
+    resumenCategoriasHtml = "<div>Sin productos</div>";
+  }
 
-  let html = `
-    <div style="font-family:Arial,sans-serif;font-size:12px;width:100%;color:#000;line-height:1.4">
-      <div style="text-align:center;margin-bottom:8px">
-        <strong style="font-size:16px">KIMSA RESTAURANTE</strong><br>
-        <strong style="font-size:13px; margin-top:4px; display:inline-block;">REPORTE DE CIERRE</strong><br>
-        <span>Fecha: ${formatearFecha(f)}</span><br>
-        <span><strong>Personal a cargo:</strong> ${esc(obtenerTextoResponsables(d))}</span>
-      </div>
-      <hr style="margin:6px 0;border:0.5px dashed #000;">
-      <div>
-        <strong>VENTAS TOTALES:</strong> ${dinero(totalDia(d))}<br>
-        <strong>PEDIDOS:</strong> ${d.pedidos.length}<br>
-        <strong>PRODUCTOS:</strong> ${cantidadDia(d)}<br>
-        ${catsActivas.map(c => `${esc(c)}: ${totalCategoria(d, c)}`).join(" | ")}
-      </div>
-      <hr style="margin:6px 0;border:0.5px dashed #000;">
-      <strong>RECAUDACIÓN POR MÉTODO:</strong>
-      <div style="margin:4px 0 6px">
-        ${Object.keys(totalesPagos).length
-          ? Object.keys(totalesPagos).map(m => `<div>${esc(m)}: ${dinero(totalesPagos[m])}</div>`).join("")
-          : "<div>Sin pagos registrados</div>"}
-      </div>
-      <hr style="margin:6px 0;border:0.5px dashed #000;">
-      <strong>POR COBRAR / FALTA PAGAR:</strong>
-      <div style="margin:4px 0 6px">
-        ${deudoresLista.length
-          ? deudoresLista.map(item => `<div>#${item.numero} ${esc(item.cliente)}: falta ${dinero(item.pendiente)} (pagó ${dinero(item.pagado)} de ${dinero(item.total)})</div>`).join("") +
-            `<div style="margin-top:4px"><strong>TOTAL FALTA PAGAR: ${dinero(totalPendienteCobrar)}</strong></div>`
-          : "<div>Ningún pedido pendiente de pago.</div>"}
-      </div>
-      <hr style="margin:6px 0;border:0.5px dashed #000;">
-      <strong>DETALLE DE PEDIDOS:</strong><br><br>
-      ${d.pedidos.length ? d.pedidos.map((p,i) => {
-        const vueltoPedido = calcularVueltoPedido(p);
-        const pendientePedido = calcularSaldoPendientePedido(p);
-        return `
-          <div style="margin-bottom:8px;padding-bottom:6px;border-bottom:1px dashed #000">
-            <strong>#${i+1} - ${esc(p.cliente)}</strong> (${esc(p.estado)}) - ${dinero(p.total)}<br>
-            ${p.productos.map(x => `${x.cantidad}× ${esc(x.nombre)} (${esc(x.categoria)})`).join(", ")}<br>
-            ${p.pagos && p.pagos.length
-              ? `Pagos: ${p.pagos.map(pg => `${esc(pg.metodo)}: ${dinero(pg.pagaCon || pg.monto)}`).join(", ")} | ${pendientePedido > 0 ? `Falta pagar: ${dinero(pendientePedido)}` : `Pagado | Vuelto: ${dinero(vueltoPedido)}`}`
-              : `Falta pagar: ${dinero(p.total)}`}
-            ${p.observacion ? `<br><em>Obs: ${esc(p.observacion)}</em>` : ""}
-          </div>
-        `;
-      }).join("") : "<p>Sin pedidos registrados.</p>"}
-    </div>
-  `;
-  mostrarConVistaPrevia(html);
+  const html = `<div style="font-family:monospace;max-width:300px;margin:auto;line-height:1.4;color:#000000;background:#ffffff;">
+    <h3 style="text-align:center;margin:0;color:#000000;">REPORTE DE VENTAS</h3>
+    <hr style="border:0;border-top:1px dashed #000000;">
+    <div>Fecha: ${esc(formatearFecha(f))}</div>
+    <div>Personal: ${esc(obtenerTextoResponsables(d))}</div>
+    <div>Estado: ${d.cerrado?"CERRADO":"ABIERTO"}</div>
+    <div>Pedidos: ${d.pedidos.length}</div>
+    <div>Productos: ${cantidadDia(d)}</div>
+    <hr style="border:0;border-top:1px dashed #000000;">
+    ${resumenCategoriasHtml}
+    <hr style="border:0;border-top:1px dashed #000000;">
+    <div><strong>TOTAL: ${dinero(totalDia(d))}</strong></div>
+  </div>`;
+
+  ejecutarImpresionTicket(html);
 };
 
-function mostrarConVistaPrevia(html){
-  $("ticket").innerHTML = html;
-  let previa = $("vistaPreviaImpresion");
-  if(!previa){
-    previa = document.createElement("div");
-    previa.id = "vistaPreviaImpresion";
-    previa.className = "no-print";
-    previa.style.cssText = "position:fixed;inset:0;z-index:9950;background:rgba(9,13,22,0.82);display:flex;justify-content:center;align-items:center;padding:14px;overflow-y:auto;";
-    document.body.appendChild(previa);
-  }
-  previa.innerHTML = `
-    <div style="background:#ffffff;color:#0f172a;border-radius:14px;padding:18px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;box-shadow:0 12px 36px rgba(0,0,0,0.45);margin:auto;border:2px solid #cbd5e1;">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;">
-        <strong style="font-size:15px;color:#0f172a;">🖨️ Vista previa de impresión</strong>
-        <button type="button" class="gray" style="margin:0;padding:6px 10px;min-height:32px;font-size:12px;" onclick="cerrarVistaPrevia()">✕ Cerrar</button>
-      </div>
-      <div style="background:#ffffff;color:#000000;border:1px solid #cbd5e1;border-radius:8px;padding:12px;margin-bottom:14px;">
-        ${html}
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
-        <button type="button" class="gray" style="margin:0;" onclick="cerrarVistaPrevia()">Cancelar</button>
-        <button type="button" class="green" style="margin:0;" onclick="ejecutarImpresionDirecta()">🖨️ Imprimir ahora</button>
-      </div>
-    </div>
-  `;
-  previa.style.display = "flex";
+function esc(s){
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
 }
 
-window.cerrarVistaPrevia = function(){
-  const previa = $("vistaPreviaImpresion");
-  if(previa) previa.style.display = "none";
-};
+$("fecha").addEventListener("change", () => { cancelarEdicion(); actualizar(); });
 
-window.ejecutarImpresionDirecta = function(){
-  window.print();
-};
+let promptInstalacionPWA = null;
 
-let eventoInstalacionDiferido = null;
+function esModoStandalone(){
+  return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+}
+
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
-  eventoInstalacionDiferido = e;
+  promptInstalacionPWA = e;
+  const btn = $("btnInstalarApp");
+  if(btn && !esModoStandalone()){
+    btn.style.display = "inline-flex";
+  }
+});
+
+window.addEventListener("appinstalled", () => {
+  promptInstalacionPWA = null;
+  const btn = $("btnInstalarApp");
+  if(btn) btn.style.display = "none";
 });
 
 window.instalarAppTelefono = async function(){
-  if(eventoInstalacionDiferido){
-    eventoInstalacionDiferido.prompt();
-    try{
-      await eventoInstalacionDiferido.userChoice;
-    }catch(e){}
-    eventoInstalacionDiferido = null;
+  if(promptInstalacionPWA){
+    promptInstalacionPWA.prompt();
+    const res = await promptInstalacionPWA.userChoice;
+    if(res && res.outcome === "accepted"){
+      promptInstalacionPWA = null;
+      const btn = $("btnInstalarApp");
+      if(btn) btn.style.display = "none";
+    }
     return;
   }
 
   const esIOS = /iPad|iPhone|iPod/i.test(navigator.userAgent || "");
   if(esIOS){
-    alert("En iPhone/iPad (Safari): toca el botón Compartir (cuadro con flecha) y luego 'Agregar a inicio' para abrirlo a pantalla completa sin barra superior.");
-    return;
+    alert("Para instalar en iPhone/iPad (sin barra de búsqueda):\n1. Toca el botón Compartir (cuadro con flecha arriba).\n2. Elige 'Agregar a inicio'.\n3. Abre la app desde el ícono creado.");
+  } else {
+    alert("Para instalar la app en pantalla completa (sin barra de búsqueda):\n1. Toca el menú de 3 puntos (⋮) de Chrome arriba a la derecha.\n2. Selecciona 'Instalar aplicación' o 'Agregar a pantalla principal'.\n3. Ábrela desde el ícono instalado.");
   }
-
-  if(location.protocol === "file:"){
-    alert("Para instalarla como app independiente en tu teléfono sin barra de búsqueda, ábrela desde el enlace HTTPS de tu hosting/servidor y luego elige 'Instalar aplicación' o 'Agregar a pantalla principal' en el menú del navegador.");
-    return;
-  }
-
-  alert("Para abrirla en pantalla completa sin barra de búsqueda: abre el menú del navegador (⋮) y toca 'Instalar aplicación' o 'Agregar a pantalla principal'.");
 };
 
-function esc(s){
-  return String(s ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  }[c]));
-}
-
-$("fecha").addEventListener("change", () => {
-  cancelarEdicion();
-  actualizar();
+window.addEventListener("storage", (e) => {
+  if(e.key === claveCategoriasDB || e.key === claveCatalogoProdDB){
+    try{
+      const cats = JSON.parse(localStorage.getItem(claveCategoriasDB) || "null");
+      if(Array.isArray(cats) && cats.length){
+        categoriasDB = fusionarCategorias([], cats);
+        refrescarSelectsCategoriasEnFormulario();
+      }
+      const prods = JSON.parse(localStorage.getItem(claveCatalogoProdDB) || "null");
+      if(Array.isArray(prods)){
+        catalogoProdDB = fusionarCatalogoProd([], prods);
+      }
+    }catch(err){}
+  }
 });
 
 configurarPWA();
+if(esModoStandalone() && $("btnInstalarApp")){
+  $("btnInstalarApp").style.display = "none";
+}
+
 agregarFilaProducto();
 actualizarSugerenciaCliente();
-actualizar();
-
 if(!restaurarSesionGuardadaSiExiste()){
   renderLoginAvatares();
   $("pantallaBloqueo").style.display = "flex";
 }
+actualizar();
 </script>
 </body>
 </html>
