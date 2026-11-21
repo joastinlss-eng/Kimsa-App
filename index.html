@@ -5337,15 +5337,65 @@ window.imprimir = function(){
     </div>
   `;
 
-  const listaNombres = d.responsables || [];
+  let listaUsuariosActualizada = Array.isArray(usuariosDB) ? [...usuariosDB] : [];
+  try{
+    const rawUsersLocal = JSON.parse(localStorage.getItem(claveUsuariosDB) || "null");
+    if(Array.isArray(rawUsersLocal) && rawUsersLocal.length){
+      const mapaUsers = new Map();
+      listaUsuariosActualizada.forEach(u => {
+        if(u && u.usuario) mapaUsers.set(String(u.usuario).trim().toLowerCase(), u);
+      });
+      rawUsersLocal.forEach(u => {
+        if(u && u.usuario) mapaUsers.set(String(u.usuario).trim().toLowerCase(), u);
+      });
+      listaUsuariosActualizada = Array.from(mapaUsers.values());
+    }
+  }catch(e){}
+
+  const candidatosNombres = [];
+  if(Array.isArray(dispositivosConectados)){
+    dispositivosConectados.forEach(dev => {
+      if(dev && dev.usuario) candidatosNombres.push(String(dev.usuario).trim());
+    });
+  }
+  if(Array.isArray(d.responsables)){
+    d.responsables.forEach(r => {
+      if(r) candidatosNombres.push(String(r).trim());
+    });
+  }
+  if(Array.isArray(d.registroUsuariosDia)){
+    d.registroUsuariosDia.forEach(reg => {
+      if(reg && reg.usuario) candidatosNombres.push(String(reg.usuario).trim());
+    });
+  }
+  if(usuarioActual){
+    candidatosNombres.push(String(usuarioActual).trim());
+  }
+
+  const nombresUnicos = [];
+  const vistosNombres = new Set();
+  candidatosNombres.forEach(nom => {
+    const clean = String(nom || "").trim();
+    if(!clean) return;
+    const key = clean.toLowerCase();
+    if(!vistosNombres.has(key)){
+      vistosNombres.add(key);
+      nombresUnicos.push(clean);
+    }
+  });
+
+  const listaNombres = nombresUnicos.length ? nombresUnicos : (d.responsables || []);
   let bloqueFirmasHTML = listaNombres.length
     ? listaNombres.map(nombreCap => {
-        const userObj = usuariosDB.find(u => u.usuario.toLowerCase() === nombreCap.toLowerCase());
-        const dniEncontrado = userObj && userObj.dni && userObj.dni !== "-" ? userObj.dni : "_________________";
+        const keyBuscada = String(nombreCap || "").trim().toLowerCase();
+        const userObj = listaUsuariosActualizada.find(u => String((u && u.usuario) || "").trim().toLowerCase() === keyBuscada);
+        const nombreMostrar = (userObj && userObj.usuario ? String(userObj.usuario).trim() : String(nombreCap || "").trim()).toUpperCase();
+        const dniRaw = userObj && userObj.dni ? String(userObj.dni).trim() : "";
+        const dniEncontrado = (dniRaw && dniRaw !== "-") ? dniRaw : "_________________";
         return `
           <div style="text-align:left;line-height:1.6;margin:12px 0 18px;padding-top:8px;border-top:1px dashed #000;">
             <div><strong>Responsable del turno</strong></div>
-            <div><strong>Nombre:</strong> ${esc(nombreCap.toUpperCase())}</div>
+            <div><strong>Nombre:</strong> ${esc(nombreMostrar)}</div>
             <div><strong>DNI:</strong> ${esc(dniEncontrado)}</div>
             <div style="margin-top:8px;"><strong>Firma:</strong> ________________________</div>
           </div>`;
