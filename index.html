@@ -5352,23 +5352,38 @@ window.imprimir = function(){
     }
   }catch(e){}
 
-  const candidatosConectados = [];
-  if(Array.isArray(dispositivosConectados)){
-    dispositivosConectados.forEach(dev => {
-      if(dev && dev.usuario) candidatosConectados.push(String(dev.usuario).trim());
+  const usuariosActivosLower = new Set();
+  if(Array.isArray(d.registroUsuariosDia)){
+    d.registroUsuariosDia.forEach(reg => {
+      if(!reg || !reg.usuario) return;
+      if(String(reg.salida || "").trim().toLowerCase() === "activo"){
+        usuariosActivosLower.add(String(reg.usuario).trim().toLowerCase());
+      }
     });
   }
 
-  if(!candidatosConectados.length && Array.isArray(d.registroUsuariosDia)){
+  const candidatosConectados = [];
+  if(Array.isArray(dispositivosConectados)){
+    dispositivosConectados.forEach(dev => {
+      if(!dev || !dev.usuario) return;
+      const uClean = String(dev.usuario).trim();
+      const uLow = uClean.toLowerCase();
+      const tieneRegistroCerrado = Array.isArray(d.registroUsuariosDia) && d.registroUsuariosDia.some(reg =>
+        reg && String(reg.usuario || "").trim().toLowerCase() === uLow &&
+        String(reg.salida || "").trim().toLowerCase() !== "activo"
+      ) && !usuariosActivosLower.has(uLow);
+      if(!tieneRegistroCerrado){
+        candidatosConectados.push(uClean);
+      }
+    });
+  }
+
+  if(!candidatosConectados.length && usuariosActivosLower.size > 0 && Array.isArray(d.registroUsuariosDia)){
     d.registroUsuariosDia.forEach(reg => {
       if(reg && reg.usuario && String(reg.salida || "").trim().toLowerCase() === "activo"){
         candidatosConectados.push(String(reg.usuario).trim());
       }
     });
-  }
-
-  if(!candidatosConectados.length && usuarioActual && usuarioTieneSesionEnEsteDispositivo(usuarioActual)){
-    candidatosConectados.push(String(usuarioActual).trim());
   }
 
   const nombresUnicos = [];
