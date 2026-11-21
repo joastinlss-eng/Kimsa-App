@@ -5352,29 +5352,28 @@ window.imprimir = function(){
     }
   }catch(e){}
 
-  const candidatosNombres = [];
+  const candidatosConectados = [];
   if(Array.isArray(dispositivosConectados)){
     dispositivosConectados.forEach(dev => {
-      if(dev && dev.usuario) candidatosNombres.push(String(dev.usuario).trim());
+      if(dev && dev.usuario) candidatosConectados.push(String(dev.usuario).trim());
     });
   }
-  if(Array.isArray(d.responsables)){
-    d.responsables.forEach(r => {
-      if(r) candidatosNombres.push(String(r).trim());
-    });
-  }
-  if(Array.isArray(d.registroUsuariosDia)){
+
+  if(!candidatosConectados.length && Array.isArray(d.registroUsuariosDia)){
     d.registroUsuariosDia.forEach(reg => {
-      if(reg && reg.usuario) candidatosNombres.push(String(reg.usuario).trim());
+      if(reg && reg.usuario && String(reg.salida || "").trim().toLowerCase() === "activo"){
+        candidatosConectados.push(String(reg.usuario).trim());
+      }
     });
   }
-  if(usuarioActual){
-    candidatosNombres.push(String(usuarioActual).trim());
+
+  if(!candidatosConectados.length && usuarioActual && usuarioTieneSesionEnEsteDispositivo(usuarioActual)){
+    candidatosConectados.push(String(usuarioActual).trim());
   }
 
   const nombresUnicos = [];
   const vistosNombres = new Set();
-  candidatosNombres.forEach(nom => {
+  candidatosConectados.forEach(nom => {
     const clean = String(nom || "").trim();
     if(!clean) return;
     const key = clean.toLowerCase();
@@ -5384,7 +5383,7 @@ window.imprimir = function(){
     }
   });
 
-  const listaNombres = nombresUnicos.length ? nombresUnicos : (d.responsables || []);
+  const listaNombres = nombresUnicos;
   let bloqueFirmasHTML = listaNombres.length
     ? listaNombres.map(nombreCap => {
         const keyBuscada = String(nombreCap || "").trim().toLowerCase();
