@@ -5352,12 +5352,20 @@ window.imprimir = function(){
     }
   }catch(e){}
 
+  const usuariosVigentesLower = new Set(
+    listaUsuariosActualizada
+      .map(u => String((u && u.usuario) || "").trim().toLowerCase())
+      .filter(Boolean)
+  );
+
   const usuariosActivosLower = new Set();
   if(Array.isArray(d.registroUsuariosDia)){
     d.registroUsuariosDia.forEach(reg => {
       if(!reg || !reg.usuario) return;
+      const uLow = String(reg.usuario).trim().toLowerCase();
+      if(!usuariosVigentesLower.has(uLow)) return;
       if(String(reg.salida || "").trim().toLowerCase() === "activo"){
-        usuariosActivosLower.add(String(reg.usuario).trim().toLowerCase());
+        usuariosActivosLower.add(uLow);
       }
     });
   }
@@ -5368,6 +5376,7 @@ window.imprimir = function(){
       if(!dev || !dev.usuario) return;
       const uClean = String(dev.usuario).trim();
       const uLow = uClean.toLowerCase();
+      if(!usuariosVigentesLower.has(uLow)) return;
       const tieneRegistroCerrado = Array.isArray(d.registroUsuariosDia) && d.registroUsuariosDia.some(reg =>
         reg && String(reg.usuario || "").trim().toLowerCase() === uLow &&
         String(reg.salida || "").trim().toLowerCase() !== "activo"
@@ -5380,7 +5389,10 @@ window.imprimir = function(){
 
   if(!candidatosConectados.length && usuariosActivosLower.size > 0 && Array.isArray(d.registroUsuariosDia)){
     d.registroUsuariosDia.forEach(reg => {
-      if(reg && reg.usuario && String(reg.salida || "").trim().toLowerCase() === "activo"){
+      if(!reg || !reg.usuario) return;
+      const uLow = String(reg.usuario).trim().toLowerCase();
+      if(!usuariosVigentesLower.has(uLow)) return;
+      if(String(reg.salida || "").trim().toLowerCase() === "activo"){
         candidatosConectados.push(String(reg.usuario).trim());
       }
     });
