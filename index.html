@@ -1918,6 +1918,10 @@ function agregarResponsableDia(d, nombreCap){
   const cap = String(nombreCap || "").trim();
   if(!cap) return;
   if(!Array.isArray(d.responsables)) d.responsables = [];
+  if(Array.isArray(d.responsablesQuitados)){
+    const low = cap.toLowerCase();
+    d.responsablesQuitados = d.responsablesQuitados.filter(x => String(x || "").trim().toLowerCase() !== low);
+  }
   const existe = d.responsables.some(r => String(r || "").trim().toLowerCase() === cap.toLowerCase());
   if(!existe){
     d.responsables.push(cap);
@@ -1926,8 +1930,13 @@ function agregarResponsableDia(d, nombreCap){
 
 function quitarResponsableDia(d, nombreUsuario){
   const targetLower = String(nombreUsuario || "").trim().toLowerCase();
-  if(!targetLower || !d || !Array.isArray(d.responsables)) return;
+  if(!targetLower || !d) return;
+  if(!Array.isArray(d.responsables)) d.responsables = [];
+  if(!Array.isArray(d.responsablesQuitados)) d.responsablesQuitados = [];
   d.responsables = d.responsables.filter(r => String(r || "").trim().toLowerCase() !== targetLower);
+  if(!d.responsablesQuitados.includes(targetLower)){
+    d.responsablesQuitados.push(targetLower);
+  }
 }
 
 let ordenPedidosTV = [];
@@ -2841,19 +2850,25 @@ function fusionarDatosRemotos(localDatos, remoteDatos){
       }
     });
 
+    const quitadosSet = new Set([
+      ...((remDia.responsablesQuitados || []).map(x => String(x || "").trim().toLowerCase())),
+      ...((locDia.responsablesQuitados || []).map(x => String(x || "").trim().toLowerCase()))
+    ]);
     const respMap = new Map();
-    (remDia.responsables || []).forEach(r => {
-      const clean = String(r || "").trim();
-      if(!clean) return;
-      const key = clean.toLowerCase();
-      if(!respMap.has(key)){
-        respMap.set(key, clean.charAt(0).toUpperCase() + clean.slice(1));
-      }
-    });
     (locDia.responsables || []).forEach(r => {
       const clean = String(r || "").trim();
       if(!clean) return;
       const key = clean.toLowerCase();
+      if(quitadosSet.has(key)) return;
+      if(!respMap.has(key)){
+        respMap.set(key, clean.charAt(0).toUpperCase() + clean.slice(1));
+      }
+    });
+    (remDia.responsables || []).forEach(r => {
+      const clean = String(r || "").trim();
+      if(!clean) return;
+      const key = clean.toLowerCase();
+      if(quitadosSet.has(key)) return;
       if(!respMap.has(key)){
         respMap.set(key, clean.charAt(0).toUpperCase() + clean.slice(1));
       }
@@ -2885,6 +2900,7 @@ function fusionarDatosRemotos(localDatos, remoteDatos){
       pedidos: Array.from(pedidosMap.values()).sort((a, b) => (a.id || 0) - (b.id || 0)),
       cerrado: Boolean(locDia.cerrado || remDia.cerrado),
       responsables: Array.from(respMap.values()),
+      responsablesQuitados: Array.from(quitadosSet),
       registroUsuariosDia: Array.from(regsMap.values()),
       registroUsuariosEliminados: Array.from(elimMap.values())
     };
