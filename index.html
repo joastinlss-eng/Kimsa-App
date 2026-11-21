@@ -2920,14 +2920,21 @@ function fusionarDispositivos(localDevs, remoteDevs){
       map.set(key, d);
     }
   };
-  (remoteDevs || []).forEach(agregar);
-  (localDevs || []).forEach(agregar);
-  return Array.from(map.values()).filter(d => {
-    if(d.deviceId === deviceId){
-      return usuarioTieneSesionEnEsteDispositivo(d.usuario);
+  if(Array.isArray(remoteDevs)){
+    remoteDevs.forEach(d => {
+      if(d && d.deviceId !== deviceId){
+        agregar(d);
+      }
+    });
+  }
+  (localDevs || []).forEach(d => {
+    if(d && d.deviceId === deviceId && usuarioTieneSesionEnEsteDispositivo(d.usuario)){
+      agregar(d);
+    } else if(d && d.deviceId !== deviceId && !Array.isArray(remoteDevs)){
+      agregar(d);
     }
-    return true;
   });
+  return Array.from(map.values());
 }
 
 async function guardarDatos(clavesBorradasFirestore = []){
@@ -3290,6 +3297,13 @@ window.desconectarDispositivoPorId = async function(targetSesionKey){
     const matchUser = uLower && String(x.usuario || "").trim().toLowerCase() === uLower && (!dev || x.deviceId === dev.deviceId);
     return !matchKey && !matchUser;
   });
+
+  if(d){
+    const activosUnicos = Array.from(new Set(
+      dispositivosConectados.map(item => String((item && item.usuario) || "").trim()).filter(Boolean)
+    ));
+    d.responsables = activosUnicos;
+  }
 
   if(usuarioActual && String(usuarioActual).trim().toLowerCase() === uLower){
     const siguienteAqui = dispositivosConectados.filter(x => x.deviceId === deviceId).slice(-1)[0];
@@ -4056,28 +4070,13 @@ function totalCategoria(d,c){
 }
 
 function obtenerTextoResponsables(d){
-  if(d && Array.isArray(d.responsables) && d.responsables.length > 0){
-    const unicos = [];
-    const vistos = new Set();
-    d.responsables.forEach(r => {
-      const lim = String(r || "").trim();
-      if(!lim) return;
-      const low = lim.toLowerCase();
-      if(!vistos.has(low)){
-        vistos.add(low);
-        unicos.push(lim.toUpperCase());
-      }
-    });
-    if(unicos.length > 0) return unicos.join(" - ");
-  }
   const conectados = (typeof dispositivosConectados !== "undefined" && Array.isArray(dispositivosConectados))
-    ? dispositivosConectados.map(dev => dev.usuario).filter(Boolean)
+    ? dispositivosConectados
+        .map(dev => String((dev && dev.usuario) || "").trim())
+        .filter(Boolean)
     : [];
   if(conectados.length > 0){
-    return Array.from(new Set(conectados.map(u => String(u).toUpperCase()))).join(" - ");
-  }
-  if(typeof usuarioActual === "string" && usuarioActual.trim()){
-    return usuarioActual.trim().toUpperCase();
+    return Array.from(new Set(conectados.map(u => u.toUpperCase()))).join(" - ");
   }
   return "Ninguno registrado";
 }
@@ -4087,7 +4086,21 @@ window.editarResponsablesManual = function(){
   let actualStr = (d.responsables || []).join(", ");
   let nuevo = prompt("Edita el personal que está a cargo (separa con comas, ej: Luis, Andrea):", actualStr);
   if(nuevo !== null){
-    d.responsables = nuevo.split(",").map(s => s.trim()).filter(Boolean);
+    const nuevosNombres = nuevo.split(",").map(s => s.trim()).filter(Boolean);
+    const prevNombres = Array.isArray(d.responsables) ? d.responsables : [];
+    const nuevosLower = new Set(nuevosNombres.map(n => n.toLowerCase()));
+    d.responsablesQuitados = Array.isArray(d.responsablesQuitados) ? [...d.responsablesQuitados] : [];
+    prevNombres.forEach(prev => {
+      const lowPrev = String(prev || "").trim().toLowerCase();
+      if(lowPrev && !nuevosLower.has(lowPrev) && !d.responsablesQuitados.includes(lowPrev)){
+        d.responsablesQuitados.push(lowPrev);
+      }
+    });
+    nuevosNombres.forEach(n => {
+      const lowN = n.toLowerCase();
+      d.responsablesQuitados = d.responsablesQuitados.filter(x => x !== lowN);
+    });
+    d.responsables = nuevosNombres;
     guardarDatos();
     actualizar();
   }
