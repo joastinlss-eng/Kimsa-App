@@ -924,6 +924,313 @@ th{background:#f1f5f9;color:#0f172a;white-space:nowrap}
   }
 }
 .print-only{display:none}
+
+/* Resumen mensual y calendario compacto de meses anteriores */
+
+/* Selector rápido de meses y cuadros de resumen mensual */
+.barra-meses-rapida{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  align-items:center;
+  margin-top:14px;
+  margin-bottom:12px;
+}
+.btn-mes-rapido{
+  padding:6px 11px;
+  border:1px solid #cbd5e1;
+  background:#f8fafc;
+  color:#0f172a;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:700;
+  font-size:12px;
+  min-height:34px;
+  margin:0;
+  transition:all 0.15s ease;
+}
+.btn-mes-rapido:hover{
+  border-color:#2563eb;
+  background:#eff6ff;
+  color:#1d4ed8;
+}
+.btn-mes-rapido.activo{
+  background:#2563eb;
+  color:#ffffff;
+  border-color:#1d4ed8;
+}
+.select-mes-rapido{
+  width:auto !important;
+  min-width:155px;
+  min-height:34px !important;
+  padding:6px 10px !important;
+  font-size:13px !important;
+  font-weight:700;
+  border-radius:8px;
+  border:1px solid #cbd5e1;
+  background:#ffffff;
+  color:#0f172a;
+}
+.cuadros-mes-seleccionado{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+  gap:10px;
+  margin-top:10px;
+}
+.cuadro-mes-kpi{
+  background:#f8fafc;
+  border:1px solid #cbd5e1;
+  border-left:4px solid #2563eb;
+  border-radius:10px;
+  padding:10px 12px;
+}
+.cuadro-mes-kpi small{
+  display:block;
+  font-size:11px;
+  font-weight:700;
+  color:#475569;
+}
+.cuadro-mes-kpi strong{
+  display:block;
+  font-size:18px;
+  font-weight:900;
+  color:#0f172a;
+  margin-top:3px;
+}
+@media(max-width:700px){
+  .cuadros-mes-seleccionado{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+}
+
+.historial-resumen-mensual{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:10px;
+  margin-bottom:14px;
+}
+.historial-card-pagado{
+  background:#ecfdf5;
+  border:1.5px solid #a7f3d0;
+  border-radius:12px;
+  padding:12px 14px;
+  color:#064e3b;
+}
+.historial-card-pagado small{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  color:#047857;
+}
+.historial-card-pagado strong{
+  display:block;
+  font-size:21px;
+  font-weight:900;
+  color:#065f46;
+  margin-top:4px;
+}
+.historial-card-ventas{
+  background:#eff6ff;
+  border:1.5px solid #bfdbfe;
+  border-radius:12px;
+  padding:12px 14px;
+  color:#0f172a;
+}
+.historial-card-ventas small{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  color:#1e3a8a;
+}
+.historial-card-ventas strong{
+  display:block;
+  font-size:21px;
+  font-weight:900;
+  color:#0f172a;
+  margin-top:4px;
+}
+.historial-card-deuda{
+  background:#fef2f2;
+  border:1.5px solid #fecaca;
+  border-radius:12px;
+  padding:12px 14px;
+  color:#991b1b;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+.historial-card-deuda small{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  color:#b91c1c;
+}
+.historial-card-deuda strong{
+  display:block;
+  font-size:21px;
+  font-weight:900;
+  color:#b91c1c;
+  margin-top:4px;
+}
+.btn-muneco-deuda{
+  background:#fee2e2;
+  color:#991b1b;
+  border:1.5px solid #fca5a5;
+  border-radius:12px;
+  padding:8px 12px;
+  min-height:44px;
+  font-size:18px;
+  font-weight:900;
+  margin:0;
+  flex-shrink:0;
+  box-shadow:0 2px 6px rgba(185,28,28,0.12);
+}
+.btn-muneco-deuda:hover{
+  background:#fecaca;
+  color:#7f1d1d;
+}
+.mes-archivado-bloque{
+  border:1px solid #cbd5e1;
+  border-radius:12px;
+  background:#f8fafc;
+  margin-top:10px;
+  overflow:hidden;
+}
+.mes-archivado-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  padding:10px 12px;
+  background:#eff6ff;
+  border-bottom:1px solid #dbeafe;
+  cursor:pointer;
+}
+.mes-archivado-titulo{
+  font-size:14px;
+  font-weight:800;
+  color:#0f172a;
+}
+.mes-archivado-badges{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.badge-mes-venta{
+  background:#dbeafe;
+  color:#1e3a8a;
+  border:1px solid #93c5fd;
+  padding:2px 8px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+}
+.badge-mes-deuda{
+  background:#fee2e2;
+  color:#b91c1c;
+  border:1px solid #fca5a5;
+  padding:2px 8px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+}
+.cal-mes-body{
+  padding:10px;
+  background:#ffffff;
+}
+.cal-grid-semana{
+  display:grid;
+  grid-template-columns:repeat(7, minmax(0, 1fr));
+  gap:4px;
+  text-align:center;
+}
+.cal-dia-semana-lbl{
+  font-size:11px;
+  font-weight:800;
+  color:#475569;
+  padding:3px 0;
+}
+.cal-celda-vacia{
+  min-height:44px;
+  border-radius:7px;
+  background:#f8fafc;
+}
+.cal-celda-dia{
+  min-height:44px;
+  border-radius:7px;
+  border:1px solid #e2e8f0;
+  background:#f8fafc;
+  padding:4px 3px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  font-size:11px;
+  color:#94a3b8;
+  user-select:none;
+}
+.cal-celda-dia.con-datos{
+  background:#eff6ff;
+  border-color:#93c5fd;
+  color:#0f172a;
+  cursor:pointer;
+  font-weight:700;
+}
+.cal-celda-dia.con-datos:hover{
+  background:#dbeafe;
+  border-color:#2563eb;
+}
+.cal-celda-dia.con-deuda{
+  border-color:#fca5a5;
+  background:#fef2f2;
+}
+.cal-celda-dia.seleccionada{
+  outline:2px solid #2563eb;
+  background:#dbeafe;
+}
+.cal-num-dia{
+  font-size:12px;
+  font-weight:800;
+  line-height:1.1;
+}
+.cal-monto-dia{
+  font-size:10px;
+  font-weight:700;
+  color:#1d4ed8;
+  margin-top:2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:100%;
+}
+.cal-celda-dia.con-deuda .cal-monto-dia{
+  color:#b91c1c;
+}
+.cal-detalle-dia-box{
+  margin-top:10px;
+  padding-top:8px;
+  border-top:1px dashed #cbd5e1;
+}
+.deudor-item-card{
+  background:#fef2f2;
+  border:1px solid #fecaca;
+  border-radius:10px;
+  padding:10px 12px;
+  margin-bottom:8px;
+  color:#0f172a;
+}
+.deudor-item-card:last-child{
+  margin-bottom:0;
+}
+@media(max-width:700px){
+  .historial-resumen-mensual{
+    grid-template-columns:1fr;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1116,8 +1423,65 @@ th{background:#f1f5f9;color:#0f172a;white-space:nowrap}
 <h2 style="margin:0;">📆 Historial de días</h2>
 <button type="button" class="gray" id="btnTogglePapeleraDias" onclick="togglePapeleraDias()">🗑️ Papelera (0)</button>
 </div>
+
+<div class="historial-resumen-mensual">
+  <div class="historial-card-ventas">
+    <small id="lblTituloAcumuladoMes">💰 Venta total acumulada (Mes actual)</small>
+    <strong id="lblMontoAcumuladoMes">S/ 0.00</strong>
+    <span class="muted" style="font-size:11px;">Se reinicia automáticamente al iniciar cada mes</span>
+  </div>
+  <div class="historial-card-pagado" id="cardPagadaMes">
+    <small id="lblTituloPagadoMes">✅ Venta pagada (Mes actual)</small>
+    <strong id="lblMontoPagadoMes">S/ 0.00</strong>
+    <span style="font-size:11px;color:#047857;">Total cobrado de todos los que pagaron</span>
+  </div>
+  <div class="historial-card-deuda" id="cardDeudaMes" style="display:none;">
+    <div>
+      <small id="lblTituloDeudaMes">⚠️ Falta pagar (Mes actual)</small>
+      <strong id="lblMontoDeudaMes">S/ 0.00</strong>
+      <span style="font-size:11px;color:#991b1b;">Total pendiente por cobrar del mes</span>
+    </div>
+    <button type="button" class="btn-muneco-deuda" id="btnVerDeudoresMes" onclick="abrirModalDeudores()" title="Ver quiénes deben, su monto y día detallado">🧍</button>
+  </div>
+</div>
+
 <div id="historial" class="muted">Todavía no hay días anteriores.</div>
 <div id="papeleraDiasContainer" class="papelera-box" style="display:none;"></div>
+
+<div class="barra-meses-rapida" id="barraMesesHistorial">
+  <button type="button" class="btn-mes-rapido" data-mes="01" onclick="seleccionarMesHistorial('01')">Ene</button>
+  <button type="button" class="btn-mes-rapido" data-mes="02" onclick="seleccionarMesHistorial('02')">Feb</button>
+  <button type="button" class="btn-mes-rapido" data-mes="03" onclick="seleccionarMesHistorial('03')">Mar</button>
+  <button type="button" class="btn-mes-rapido" data-mes="04" onclick="seleccionarMesHistorial('04')">Abr</button>
+  <button type="button" class="btn-mes-rapido" data-mes="05" onclick="seleccionarMesHistorial('05')">May</button>
+  <button type="button" class="btn-mes-rapido" data-mes="06" onclick="seleccionarMesHistorial('06')">Jun</button>
+  <button type="button" class="btn-mes-rapido" data-mes="07" onclick="seleccionarMesHistorial('07')">Jul</button>
+  <button type="button" class="btn-mes-rapido" data-mes="08" onclick="seleccionarMesHistorial('08')">Ago</button>
+  <button type="button" class="btn-mes-rapido" data-mes="09" onclick="seleccionarMesHistorial('09')">Sep</button>
+  <button type="button" class="btn-mes-rapido" data-mes="10" onclick="seleccionarMesHistorial('10')">Oct</button>
+  <button type="button" class="btn-mes-rapido" data-mes="11" onclick="seleccionarMesHistorial('11')">Nov</button>
+  <button type="button" class="btn-mes-rapido" data-mes="12" onclick="seleccionarMesHistorial('12')">Dic</button>
+  <select id="selectMesHistorial" class="select-mes-rapido" aria-label="Seleccionar año" onchange="seleccionarAnioHistorial(this.value)"></select>
+</div>
+
+<div class="cuadros-mes-seleccionado" id="cuadrosMesSeleccionado">
+  <div class="cuadro-mes-kpi">
+    <small id="lblCuadroMesVentas">Ventas del mes</small>
+    <strong id="cuadroMesVentas">S/ 0.00</strong>
+  </div>
+  <div class="cuadro-mes-kpi">
+    <small>Total pedidos</small>
+    <strong id="cuadroMesPedidos">0</strong>
+  </div>
+  <div class="cuadro-mes-kpi">
+    <small>Pagados</small>
+    <strong id="cuadroMesPagados">0</strong>
+  </div>
+  <div class="cuadro-mes-kpi">
+    <small>Pendientes</small>
+    <strong id="cuadroMesPendientes">0</strong>
+  </div>
+</div>
 </section>
 
 <section class="print-only" id="ticket"></section>
@@ -1236,6 +1600,29 @@ th{background:#f1f5f9;color:#0f172a;white-space:nowrap}
 <button class="blue" onclick="exportarClientesPDF()">📄 Descargar PDF</button>
 </div>
 <button class="gray" onclick="cerrarModalClientes()">Cerrar</button>
+</div>
+</div>
+</div>
+
+<!-- Modal de Deudores del Mes / Historial -->
+<div id="modalDeudores" class="modal-overlay">
+<div class="modal-content">
+<h3>🧍 Detalle de clientes que deben</h3>
+<p id="subtituloModalDeudores" class="muted" style="margin-top:0">Listado detallado por fecha y pedido.</p>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center;">
+  <select id="filtroAlcanceDeudores" style="flex:1;min-width:190px;" onchange="renderListaDeudoresModal()">
+    <option value="mes">Solo mes seleccionado</option>
+    <option value="todos">Todos los meses registrados</option>
+  </select>
+  <input type="text" id="buscarDeudorInput" placeholder="Buscar cliente o fecha..." style="flex:1.4;min-width:180px;" oninput="renderListaDeudoresModal()">
+</div>
+
+<div id="listaDeudoresContainer" style="max-height:320px;overflow-y:auto;border:1px solid #fecaca;border-radius:10px;padding:10px;background:#ffffff;margin-bottom:14px;"></div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+  <button type="button" class="blue" style="margin:0;" onclick="imprimirDeudoresDetalle()">🖨️ Imprimir detalle de deudores</button>
+  <button type="button" class="gray" style="margin:0;" onclick="cerrarModalDeudores()">Cerrar</button>
 </div>
 </div>
 </div>
@@ -3022,6 +3409,16 @@ if(docRef){
       purgarPapeleraExpirada(Date.now());
       guardarPapeleraLocal();
     }
+    if(remote.datos){
+      const recienModificadoLocal = ultimaModificacionLocalMs && (Date.now() - ultimaModificacionLocalMs) < 15000;
+      if(!recienModificadoLocal){
+        Object.keys(datos).forEach(f => {
+          if(!(f in remote.datos) && !(f in papeleraDias)){
+            delete datos[f];
+          }
+        });
+      }
+    }
     if(Array.isArray(remote.dispositivosConectados)){
       dispositivosConectados = fusionarDispositivos(dispositivosConectados, remote.dispositivosConectados);
     }
@@ -4040,7 +4437,7 @@ function formatearFechaHora(timestamp){
 }
 
 function dia(){
-  const f = $("fecha").value || hoy();
+  const f = ($("fecha") && $("fecha").value) || hoy();
   if(!datos[f] || typeof datos[f] !== "object"){
     datos[f] = {pedidos:[], cerrado:false, responsables:[], registroUsuariosDia:[], registroUsuariosEliminados:[]};
   }
@@ -4049,6 +4446,28 @@ function dia(){
   if(!Array.isArray(datos[f].registroUsuariosDia)) datos[f].registroUsuariosDia = [];
   if(!Array.isArray(datos[f].registroUsuariosEliminados)) datos[f].registroUsuariosEliminados = [];
   return datos[f];
+}
+
+// Si el día seleccionado estaba en la papelera, se recupera antes de permitir
+// registrar pedidos. Así se evita que la sincronización remota vuelva a borrar
+// silenciosamente los pedidos de esa fecha.
+function restaurarFechaSiEstaEnPapelera(fecha){
+  const item = papeleraDias && papeleraDias[fecha];
+  if(!item || !item.diaData) return false;
+
+  const anterior = item.diaData;
+  datos[fecha] = {
+    ...anterior,
+    pedidos: Array.isArray(anterior.pedidos) ? anterior.pedidos : [],
+    cerrado: Boolean(anterior.cerrado),
+    responsables: Array.isArray(anterior.responsables) ? anterior.responsables : [],
+    registroUsuariosDia: Array.isArray(anterior.registroUsuariosDia) ? anterior.registroUsuariosDia : [],
+    registroUsuariosEliminados: Array.isArray(anterior.registroUsuariosEliminados) ? anterior.registroUsuariosEliminados : []
+  };
+  delete papeleraDias[fecha];
+  localStorage.setItem(clave, JSON.stringify(datos));
+  guardarPapeleraLocal();
+  return true;
 }
 
 function dinero(n){
@@ -4217,49 +4636,69 @@ window.calcularVueltoEnVivo = function(){
   }
 };
 
-window.guardarPedido = function(){
+window.guardarPedido = async function(){
+  const fechaTrabajo = ($("fecha") && $("fecha").value) || hoy();
+  const fechaRestauradaDePapelera = restaurarFechaSiEstaEnPapelera(fechaTrabajo);
   const d = dia();
-  if(d.cerrado) return alert("Este día ya está cerrado.");
+  if(!d || d.cerrado){
+    alert("Este día ya está cerrado.");
+    return false;
+  }
 
-  const cliente = $("cliente").value.trim();
-  if(!cliente) return alert("Escribe el nombre del cliente.");
+  const cliente = (($("cliente") && $("cliente").value) || "").trim();
+  if(!cliente){
+    alert("Escribe el nombre del cliente.");
+    if($("cliente")) $("cliente").focus();
+    return false;
+  }
 
   const filasProd = [...document.querySelectorAll(".producto")];
   const productosRaw = [];
   for(const f of filasProd){
-    const nombre = f.querySelector(".nombre").value.trim();
-    const categoria = normalizarCategoria(f.querySelector(".categoria").value);
-    const cantidad = Number(f.querySelector(".cantidad").value);
-    const precio = Number(f.querySelector(".precio").value);
+    const nombre = ((f.querySelector(".nombre") && f.querySelector(".nombre").value) || "").trim();
+    const categoria = normalizarCategoria(f.querySelector(".categoria") && f.querySelector(".categoria").value);
+    const cantidad = Number(f.querySelector(".cantidad") && f.querySelector(".cantidad").value);
+    const precio = Number(String((f.querySelector(".precio") && f.querySelector(".precio").value) || "0").replace(",", "."));
     if(!nombre) continue;
-    if(!Number.isInteger(cantidad) || cantidad < 1 || !Number.isFinite(precio) || precio < 0){
-      return alert("Revisa las cantidades y precios de los productos.");
+    if(!Number.isFinite(cantidad) || cantidad < 1 || !Number.isFinite(precio) || precio < 0){
+      alert("Revisa las cantidades y precios de los productos.");
+      return false;
     }
-    productosRaw.push({nombre, categoria, cantidad, precio, subtotal: cantidad * precio});
+    const subtotal = Number((cantidad * precio).toFixed(2));
+    productosRaw.push({ nombre, categoria, cantidad, precio, subtotal });
   }
 
-  if(!productosRaw.length) return alert("Añade al menos un producto.");
+  if(!productosRaw.length){
+    alert("Añade al menos un producto con nombre.");
+    return false;
+  }
+
   const productos = ordenarProductosPorComanda(productosRaw);
-  const total = productos.reduce((s,p) => s + p.subtotal, 0);
+  const total = Number(productos.reduce((s, p) => s + Number(p.subtotal || 0), 0).toFixed(2));
 
   const filasPago = [...document.querySelectorAll(".pago-item")];
   const pagos = [];
   filasPago.forEach(f => {
-    const valInput = f.querySelector(".pago-con").value;
+    const valInput = String((f.querySelector(".pago-con") && f.querySelector(".pago-con").value) || "").replace(",", ".").trim();
     const pagaConVal = valInput === "" ? 0 : Number(valInput);
-    if(pagaConVal <= 0) return;
-    const metodo = f.querySelector(".pago-metodo").value;
+    if(!Number.isFinite(pagaConVal) || pagaConVal <= 0) return;
+    const montoRedondeado = Number(pagaConVal.toFixed(2));
+    const metodo = (f.querySelector(".pago-metodo") && f.querySelector(".pago-metodo").value) || "Efectivo";
     pagos.push({
       metodo,
-      monto: pagaConVal,
-      pagaCon: metodo === "Efectivo" ? pagaConVal : null
+      monto: montoRedondeado,
+      pagaCon: metodo === "Efectivo" ? montoRedondeado : null
     });
   });
 
   registrarClienteSiNoExiste(cliente);
 
-  const observacion = $("observacion").value.trim();
-  const editadoPor = usuarioActual ? usuarioActual.toUpperCase() : "SISTEMA";
+  const observacion = (($("observacion") && $("observacion").value) || "").trim();
+  const editadoPor = usuarioActual ? String(usuarioActual).toUpperCase() : "SISTEMA";
+
+  if(!Array.isArray(d.pedidos)){
+    d.pedidos = [];
+  }
 
   if(editandoId !== null){
     const p = d.pedidos.find(x => x.id === editandoId);
@@ -4274,8 +4713,11 @@ window.guardarPedido = function(){
     cancelarEdicion();
   } else {
     const ahoraMs = Date.now();
+    const nuevoId = d.pedidos.some(x => x.id === ahoraMs)
+      ? Math.max(...d.pedidos.map(x => Number(x.id) || 0), ahoraMs) + 1
+      : ahoraMs;
     d.pedidos.push({
-      id: ahoraMs,
+      id: nuevoId,
       creadoEnMs: ahoraMs,
       entregadoEnMs: null,
       tvPausado: false,
@@ -4288,21 +4730,27 @@ window.guardarPedido = function(){
       total,
       observacion,
       estado: "Pendiente",
-      creadoPor: `${editadoPor} (${deviceTipo})`
+      creadoPor: `${editadoPor} (${deviceTipo})`,
+      modificadoPor: null,
+      entregadoPor: null,
+      eliminadoPor: null
     });
-    if(!ordenPedidosTV.includes(ahoraMs)){
-      ordenPedidosTV.push(ahoraMs);
+    if(!ordenPedidosTV.includes(nuevoId)){
+      ordenPedidosTV.push(nuevoId);
     }
-    $("cliente").value = "";
-    $("observacion").value = "";
-    $("productos").innerHTML = "";
-    $("pagos").innerHTML = "";
+    if($("cliente")) $("cliente").value = "";
+    if($("observacion")) $("observacion").value = "";
+    if($("productos")) $("productos").innerHTML = "";
+    if($("pagos")) $("pagos").innerHTML = "";
     agregarFilaProducto();
     actualizarSugerenciaCliente();
   }
 
-  guardarDatos();
+  datos[fechaTrabajo] = d;
+  localStorage.setItem(clave, JSON.stringify(datos));
   actualizar();
+  await guardarDatos(fechaRestauradaDePapelera ? [fechaTrabajo] : []);
+  return true;
 };
 
 function cargarPedidoParaEditar(id){
@@ -5113,12 +5561,7 @@ function actualizar(){
       td.append(div);
     }
 
-    if(p.modificadoPor){
-      const divMod = document.createElement("div");
-      divMod.className = "muted";
-      divMod.textContent = "✏️ Editado por: " + p.modificadoPor;
-      td.append(divMod);
-    }
+
 
     const total = document.createElement("td");
     total.className = "total-celda";
@@ -5197,48 +5640,609 @@ function actualizar(){
 
   renderModoTV();
 
-  const contenedorHistorial = $("historial");
-  contenedorHistorial.innerHTML = "";
-  const llavesFechas = Object.keys(datos).sort().reverse();
-
-  if(!llavesFechas.length){
-    contenedorHistorial.innerHTML = '<div class="muted">Todavía no hay días anteriores.</div>';
-  } else {
-    llavesFechas.forEach(fecha => {
-      const dHistorial = datos[fecha];
-      const divItem = document.createElement("div");
-      divItem.className = "history-item";
-      const estadoTexto = dHistorial.cerrado ? "CERRADO" : "ABIERTO";
-      const respHistorial = obtenerTextoResponsables(dHistorial);
-
-      const bDia = document.createElement("button");
-      bDia.className = "btn-dia";
-      bDia.textContent = `${formatearFecha(fecha)} · ${respHistorial} · ${dHistorial.pedidos.length} pedidos · ${dinero(totalDia(dHistorial))} · ${estadoTexto}`;
-      bDia.onclick = () => {
-        $("fecha").value = fecha;
-        cancelarEdicion();
-        actualizar();
-      };
-
-      const bExcel = document.createElement("button");
-      bExcel.className = "green";
-      bExcel.textContent = "📊";
-      bExcel.style.margin = "0";
-      bExcel.onclick = () => abrirModalExcel(fecha);
-
-      const bDel = document.createElement("button");
-      bDel.className = "red";
-      bDel.textContent = "🗑️";
-      bDel.style.margin = "0";
-      bDel.onclick = () => eliminarDia(fecha);
-
-      divItem.append(bDia, bExcel, bDel);
-      contenedorHistorial.appendChild(divItem);
-    });
-  }
+  renderHistorialYResumenMensual();
 
   renderPapeleraDias();
 }
+
+
+const NOMBRES_MESES_ES = [
+  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+];
+
+let mesesCalendarioAbiertos = {};
+let fechaDetalleCalendarioPorMes = {};
+
+function formatearNombreMesAnio(mesPrefijo){
+  const [anioStr, mesStr] = String(mesPrefijo || "").split("-");
+  const idx = parseInt(mesStr, 10) - 1;
+  const nombre = NOMBRES_MESES_ES[idx] || mesPrefijo;
+  return `${nombre} ${anioStr || ""}`.trim();
+}
+
+function obtenerMesReferenciaResumen(){
+  const fSel = $("fecha") && $("fecha").value ? $("fecha").value : hoy();
+  return fSel.substring(0, 7);
+}
+
+function calcularResumenYDeudores(mesFiltro = null){
+  let ventaTotal = 0;
+  let pagadoTotal = 0;
+  let deudaTotal = 0;
+  const listaDeudores = [];
+
+  const fechasOrdenadas = Object.keys(datos).sort().reverse();
+  fechasOrdenadas.forEach(f => {
+    if(mesFiltro && !f.startsWith(mesFiltro)) return;
+    const dObj = datos[f];
+    if(!dObj || !Array.isArray(dObj.pedidos)) return;
+
+    ventaTotal += totalDia(dObj);
+
+    dObj.pedidos.forEach((p, idx) => {
+      const tot = Number(p.total) || 0;
+      const falta = obtenerFaltaPagarPedido(p);
+      const cobradoReal = Math.max(0, tot - falta);
+      pagadoTotal += cobradoReal;
+      if(falta > 0){
+        deudaTotal += falta;
+        const pagado = obtenerTotalPagadoPedido(p);
+        const prodsOrdenados = ordenarProductosPorComanda(p.productos || []);
+        listaDeudores.push({
+          fecha: f,
+          fechaFmt: formatearFecha(f),
+          pedidoId: p.id,
+          numeroPedido: idx + 1,
+          cliente: p.cliente || "Sin nombre",
+          productosTxt: prodsOrdenados.map(pr => `${pr.cantidad}x ${pr.nombre} (${pr.categoria})`).join(", "),
+          totalPedido: tot,
+          pagado,
+          falta,
+          observacion: p.observacion || "",
+          estado: p.estado || "Pendiente"
+        });
+      }
+    });
+  });
+
+  return {
+    ventaTotal: Number(ventaTotal.toFixed(2)),
+    pagadoTotal: Number(pagadoTotal.toFixed(2)),
+    deudaTotal: Number(deudaTotal.toFixed(2)),
+    listaDeudores
+  };
+}
+
+function crearFilaDetalleHistorialDia(fecha){
+  const dHistorial = datos[fecha];
+  if(!dHistorial) return document.createElement("div");
+
+  const divItem = document.createElement("div");
+  divItem.className = "history-item";
+  const estadoTexto = dHistorial.cerrado ? "CERRADO" : "ABIERTO";
+  const respHistorial = obtenerTextoResponsables(dHistorial);
+
+  const bDia = document.createElement("button");
+  bDia.className = "btn-dia";
+  bDia.textContent = `${formatearFecha(fecha)} · ${respHistorial} · ${dHistorial.pedidos.length} pedidos · ${dinero(totalDia(dHistorial))} · ${estadoTexto}`;
+  bDia.onclick = () => {
+    $("fecha").value = fecha;
+    cancelarEdicion();
+    actualizar();
+  };
+
+  const bExcel = document.createElement("button");
+  bExcel.className = "green";
+  bExcel.textContent = "📊";
+  bExcel.style.margin = "0";
+  bExcel.onclick = () => abrirModalExcel(fecha);
+
+  const bDel = document.createElement("button");
+  bDel.className = "red";
+  bDel.textContent = "🗑️";
+  bDel.style.margin = "0";
+  bDel.onclick = () => eliminarDia(fecha);
+
+  divItem.append(bDia, bExcel, bDel);
+  return divItem;
+}
+
+function construirCalendarioCompactoMes(mesPrefijo, fechasDelMes){
+  const [anioStr, mesStr] = mesPrefijo.split("-");
+  const anio = parseInt(anioStr, 10);
+  const mes = parseInt(mesStr, 10);
+  const diasEnMes = new Date(anio, mes, 0).getDate();
+  const primerDiaSemanaJS = new Date(anio, mes - 1, 1).getDay(); // 0=Dom, 1=Lun...
+  const offsetLunes = (primerDiaSemanaJS + 6) % 7;
+
+  const mapaFechas = new Map(fechasDelMes.map(f => [f, datos[f]]));
+  const fechaDetalleSel = fechaDetalleCalendarioPorMes[mesPrefijo] && mapaFechas.has(fechaDetalleCalendarioPorMes[mesPrefijo])
+    ? fechaDetalleCalendarioPorMes[mesPrefijo]
+    : (fechasDelMes[0] || null);
+
+  const calBody = document.createElement("div");
+  calBody.className = "cal-mes-body";
+
+  const grid = document.createElement("div");
+  grid.className = "cal-grid-semana";
+
+  ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].forEach(lbl => {
+    const h = document.createElement("div");
+    h.className = "cal-dia-semana-lbl";
+    h.textContent = lbl;
+    grid.appendChild(h);
+  });
+
+  for(let i = 0; i < offsetLunes; i++){
+    const vac = document.createElement("div");
+    vac.className = "cal-celda-vacia";
+    grid.appendChild(vac);
+  }
+
+  for(let diaNum = 1; diaNum <= diasEnMes; diaNum++){
+    const fStr = `${anioStr}-${mesStr}-${String(diaNum).padStart(2, "0")}`;
+    const dObj = mapaFechas.get(fStr);
+    const celda = document.createElement("div");
+    celda.className = "cal-celda-dia";
+
+    if(dObj){
+      const totD = totalDia(dObj);
+      const tieneDeuda = (dObj.pedidos || []).some(p => obtenerFaltaPagarPedido(p) > 0);
+      celda.classList.add("con-datos");
+      if(tieneDeuda) celda.classList.add("con-deuda");
+      if(fechaDetalleSel === fStr) celda.classList.add("seleccionada");
+      celda.title = `${formatearFecha(fStr)} · ${dObj.pedidos.length} pedidos · ${dinero(totD)}`;
+      celda.innerHTML = `
+        <span class="cal-num-dia">${diaNum}</span>
+        <span class="cal-monto-dia">S/${Math.round(totD)}</span>
+      `;
+      celda.onclick = () => {
+        fechaDetalleCalendarioPorMes[mesPrefijo] = fStr;
+        $("fecha").value = fStr;
+        cancelarEdicion();
+        actualizar();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
+    } else {
+      celda.innerHTML = `<span class="cal-num-dia">${diaNum}</span>`;
+    }
+
+    grid.appendChild(celda);
+  }
+
+  calBody.appendChild(grid);
+
+  if(fechaDetalleSel && mapaFechas.has(fechaDetalleSel)){
+    const detalleWrap = document.createElement("div");
+    detalleWrap.className = "cal-detalle-dia-box";
+    detalleWrap.appendChild(crearFilaDetalleHistorialDia(fechaDetalleSel));
+    calBody.appendChild(detalleWrap);
+  }
+
+  return calBody;
+}
+
+
+function obtenerAnioReferenciaMes(){
+  const fVal = ($("fecha") && $("fecha").value) || hoy();
+  const partes = String(fVal).split("-");
+  return partes[0] || hoy().slice(0, 4);
+}
+
+function anioTieneVentas(anioStr){
+  const yr = String(anioStr || "").trim();
+  if(!/^\d{4}$/.test(yr)) return false;
+
+  return Object.keys(datos || {}).some(f => {
+    if(!f.startsWith(yr + "-")) return false;
+    const dObj = datos[f];
+    if(!dObj || !Array.isArray(dObj.pedidos) || dObj.pedidos.length === 0) return false;
+    return totalDia(dObj) > 0;
+  });
+}
+
+function obtenerAniosDisponiblesHistorial(anioActivo){
+  const setAnios = new Set();
+  const anioHoy = parseInt(hoy().slice(0, 4), 10) || 2026;
+
+  setAnios.add(String(anioHoy));
+
+  Object.keys(datos || {}).forEach(f => {
+    if(/^\d{4}-\d{2}-\d{2}$/.test(f)){
+      const yr = f.slice(0, 4);
+      if(anioTieneVentas(yr)) setAnios.add(yr);
+    }
+  });
+
+  return Array.from(setAnios).sort().reverse();
+}
+
+function poblarSelectAniosHistorial(anioSeleccionado){
+  const sel = $("selectMesHistorial");
+  if(!sel) return;
+  const anios = obtenerAniosDisponiblesHistorial(anioSeleccionado);
+  const htmlOpciones = anios.map(yr => `<option value="${esc(yr)}">${esc(yr)}</option>`).join("");
+
+  if(sel.innerHTML !== htmlOpciones){
+    sel.innerHTML = htmlOpciones;
+  }
+  const targetAnio = anios.includes(String(anioSeleccionado)) ? String(anioSeleccionado) : anios[0];
+  if(targetAnio && sel.value !== targetAnio){
+    sel.value = targetAnio;
+  }
+}
+
+function minimizarOtrosMesesExcepto(mesObjetivo){
+  const todosMeses = new Set(Object.keys(mesesCalendarioAbiertos || {}));
+  Object.keys(datos || {}).forEach(f => {
+    if(/^\d{4}-\d{2}-\d{2}$/.test(f)) todosMeses.add(f.slice(0, 7));
+  });
+  const nuevoEstado = {};
+  todosMeses.forEach(m => {
+    nuevoEstado[m] = false;
+  });
+  if(mesObjetivo){
+    nuevoEstado[mesObjetivo] = true;
+  }
+  mesesCalendarioAbiertos = nuevoEstado;
+}
+
+function mesTieneVentas(mesPrefijo){
+  if(!/^\d{4}-\d{2}$/.test(String(mesPrefijo || ""))) return false;
+  return Object.keys(datos || {}).some(f => {
+    if(!f.startsWith(mesPrefijo + "-")) return false;
+    const dObj = datos[f];
+    if(!dObj || !Array.isArray(dObj.pedidos) || dObj.pedidos.length === 0) return false;
+    return totalDia(dObj) > 0;
+  });
+}
+
+function buscarMesConVentaEnAnio(yr, mesPreferido=""){
+  const fechasAnio = Object.keys(datos || {})
+    .filter(f => f.startsWith(`${yr}-`) && /^\d{4}-\d{2}-\d{2}$/.test(f))
+    .sort()
+    .reverse();
+
+  const mesesConVenta = Array.from(new Set(
+    fechasAnio
+      .map(f => f.slice(0, 7))
+      .filter(mKey => mesTieneVentas(mKey))
+  ));
+
+  if(mesesConVenta.length){
+    if(mesPreferido && mesesConVenta.includes(`${yr}-${mesPreferido}`)){
+      return `${yr}-${mesPreferido}`;
+    }
+    return mesesConVenta[0];
+  }
+
+  const mesesConDias = Array.from(new Set(fechasAnio.map(f => f.slice(0, 7))));
+  if(mesesConDias.length){
+    if(mesPreferido && mesesConDias.includes(`${yr}-${mesPreferido}`)){
+      return `${yr}-${mesPreferido}`;
+    }
+    return mesesConDias[0];
+  }
+
+  return `${yr}-${mesPreferido || hoy().slice(5, 7)}`;
+}
+
+window.seleccionarAnioHistorial = function(anioSeleccionado){
+  const yr = /^\d{4}$/.test(String(anioSeleccionado || "").trim())
+    ? String(anioSeleccionado).trim()
+    : obtenerAnioReferenciaMes();
+
+  const mesActualPartes = (obtenerMesReferenciaResumen() || hoy().slice(0, 7)).split("-");
+  const mesSolo = mesActualPartes[1] || hoy().slice(5, 7);
+  const claveMes = buscarMesConVentaEnAnio(yr, mesSolo);
+
+  minimizarOtrosMesesExcepto(claveMes);
+
+  const fechasDelMes = Object.keys(datos || {})
+    .filter(f => f.startsWith(`${claveMes}-`))
+    .sort()
+    .reverse();
+  const fechaConVentaMes = fechasDelMes.find(f => {
+    const dObj = datos[f];
+    return dObj && Array.isArray(dObj.pedidos) && dObj.pedidos.length > 0 && totalDia(dObj) > 0;
+  });
+  const fechaDestino = fechaConVentaMes || fechasDelMes[0] || null;
+
+  if(fechaDestino && $("fecha") && $("fecha").value !== fechaDestino){
+    $("fecha").value = fechaDestino;
+    cancelarEdicion();
+    actualizar();
+    return;
+  }
+
+  sincronizarControlesMesHistorial(claveMes);
+  renderHistorialYResumenMensual();
+};
+
+function sincronizarControlesMesHistorial(mesPrefijo){
+  const claveMes = /^\d{4}-\d{2}$/.test(String(mesPrefijo || ""))
+    ? String(mesPrefijo)
+    : (obtenerMesReferenciaResumen() || hoy().slice(0, 7));
+  const partes = claveMes.split("-");
+  const anioSolo = partes[0] || hoy().slice(0, 4);
+  const mesSolo = partes[1] || hoy().slice(5, 7);
+
+  document.querySelectorAll("#barraMesesHistorial .btn-mes-rapido").forEach(btn => {
+    btn.classList.toggle("activo", btn.dataset.mes === mesSolo);
+  });
+
+  poblarSelectAniosHistorial(anioSolo);
+
+  const resumen = calcularResumenYDeudores(claveMes);
+  let totalPedidosMes = 0;
+  let cantPagadosMes = 0;
+  let cantPendientesMes = 0;
+
+  Object.keys(datos).forEach(f => {
+    if(!f.startsWith(claveMes)) return;
+    const dObj = datos[f];
+    if(!dObj || !Array.isArray(dObj.pedidos)) return;
+    dObj.pedidos.forEach(p => {
+      totalPedidosMes++;
+      if(obtenerFaltaPagarPedido(p) > 0){
+        cantPendientesMes++;
+      } else {
+        cantPagadosMes++;
+      }
+    });
+  });
+
+  if($("lblCuadroMesVentas")){
+    $("lblCuadroMesVentas").textContent = `Ventas (${formatearNombreMesAnio(claveMes)})`;
+  }
+  if($("cuadroMesVentas")) $("cuadroMesVentas").textContent = dinero(resumen.ventaTotal);
+  if($("cuadroMesPedidos")) $("cuadroMesPedidos").textContent = String(totalPedidosMes);
+  if($("cuadroMesPagados")) $("cuadroMesPagados").textContent = String(cantPagadosMes);
+  if($("cuadroMesPendientes")) $("cuadroMesPendientes").textContent = String(cantPendientesMes);
+}
+
+window.seleccionarMesHistorial = function(mesDosDigitos){
+  const mesNorm = String(mesDosDigitos || "").padStart(2, "0");
+  const selAnio = $("selectMesHistorial");
+  const anioRef = (selAnio && /^\d{4}$/.test(selAnio.value))
+    ? selAnio.value
+    : obtenerAnioReferenciaMes();
+  const claveMes = `${anioRef}-${mesNorm}`;
+
+  mesesCalendarioAbiertos[claveMes] = true;
+
+  const fechasDelMes = Object.keys(datos).filter(f => f.startsWith(claveMes)).sort();
+  if(fechasDelMes.length && $("fecha")){
+    const fechaActual = $("fecha").value;
+    if(!fechaActual || !fechaActual.startsWith(claveMes)){
+      $("fecha").value = fechasDelMes[0];
+      cancelarEdicion();
+      actualizar();
+      return;
+    }
+  }
+
+  sincronizarControlesMesHistorial(claveMes);
+  renderHistorialYResumenMensual();
+};
+
+function renderHistorialYResumenMensual(){
+  const mesActualSistema = hoy().substring(0, 7);
+  const mesRef = obtenerMesReferenciaResumen();
+  sincronizarControlesMesHistorial(mesRef);
+  const nombreMesRef = formatearNombreMesAnio(mesRef);
+
+  const resumenMes = calcularResumenYDeudores(mesRef);
+
+  if($("lblTituloAcumuladoMes")){
+    $("lblTituloAcumuladoMes").textContent = `💰 Venta acumulada (${nombreMesRef})`;
+  }
+  if($("lblMontoAcumuladoMes")){
+    $("lblMontoAcumuladoMes").textContent = dinero(resumenMes.ventaTotal);
+  }
+  const mesCompletamentePagado = resumenMes.ventaTotal > 0 && resumenMes.deudaTotal <= 0.0001 && Math.abs(resumenMes.pagadoTotal - resumenMes.ventaTotal) <= 0.01;
+  const cardPagada = $("cardPagadaMes");
+  if(cardPagada){
+    cardPagada.style.display = mesCompletamentePagado ? "none" : "block";
+  }
+  if($("lblTituloPagadoMes")){
+    $("lblTituloPagadoMes").textContent = `✅ Venta pagada (${nombreMesRef})`;
+  }
+  if($("lblMontoPagadoMes")){
+    $("lblMontoPagadoMes").textContent = dinero(resumenMes.pagadoTotal);
+  }
+  const cardDeuda = $("cardDeudaMes");
+  const hayDeudoresMes = resumenMes.deudaTotal > 0 || resumenMes.listaDeudores.length > 0;
+  if(cardDeuda){
+    cardDeuda.style.display = hayDeudoresMes ? "flex" : "none";
+  }
+  if($("lblTituloDeudaMes")){
+    $("lblTituloDeudaMes").textContent = `⚠️ Falta pagar (${nombreMesRef})`;
+  }
+  if($("lblMontoDeudaMes")){
+    $("lblMontoDeudaMes").textContent = dinero(resumenMes.deudaTotal);
+  }
+
+  const contenedorHistorial = $("historial");
+  if(!contenedorHistorial) return;
+  contenedorHistorial.innerHTML = "";
+
+  const llavesFechas = Object.keys(datos).sort().reverse();
+  if(!llavesFechas.length){
+    contenedorHistorial.innerHTML = '<div class="muted">Todavía no hay días anteriores.</div>';
+    return;
+  }
+
+  // Agrupar todos los meses YYYY-MM (incluido el mes actual en curso)
+  const gruposPorMes = new Map();
+  llavesFechas.forEach(f => {
+    const mKey = f.substring(0, 7);
+    if(!gruposPorMes.has(mKey)) gruposPorMes.set(mKey, []);
+    gruposPorMes.get(mKey).push(f);
+  });
+
+  // Por defecto, el mes actual empieza desplegado con su calendario compacto, y los anteriores plegados
+  if(gruposPorMes.has(mesActualSistema) && typeof mesesCalendarioAbiertos[mesActualSistema] === "undefined"){
+    mesesCalendarioAbiertos[mesActualSistema] = true;
+  }
+
+  const todosLosMesesOrdenados = Array.from(gruposPorMes.keys()).sort().reverse();
+  const anioActivoSel = (obtenerMesReferenciaResumen() || hoy().slice(0, 7)).slice(0, 4);
+  const mesesConVentaEnAnio = todosLosMesesOrdenados.filter(mKey => mKey.startsWith(anioActivoSel + "-") && mesTieneVentas(mKey));
+  const mesesAMostrar = mesesConVentaEnAnio.length ? mesesConVentaEnAnio : todosLosMesesOrdenados;
+
+  mesesAMostrar.forEach(mKey => {
+    const fechasMes = gruposPorMes.get(mKey) || [];
+    const resumenM = calcularResumenYDeudores(mKey);
+    const estaAbierto = Boolean(mesesCalendarioAbiertos[mKey]);
+    const esMesActual = mKey === mesActualSistema;
+
+    const bloque = document.createElement("div");
+    bloque.className = "mes-archivado-bloque";
+
+    const header = document.createElement("div");
+    header.className = "mes-archivado-header";
+    header.innerHTML = `
+      <div class="mes-archivado-titulo">
+        ${estaAbierto ? "▾" : "▸"} 📅 ${esc(formatearNombreMesAnio(mKey))}${esMesActual ? ' <span style="font-size:11px;color:#1d4ed8;">(Mes actual)</span>' : ""} <span class="muted">(${fechasMes.length} día${fechasMes.length === 1 ? "" : "s"})</span>
+      </div>
+      <div class="mes-archivado-badges">
+        <span class="badge-mes-venta">Ventas: ${dinero(resumenM.ventaTotal)}</span>
+        ${resumenM.deudaTotal > 0 ? `<span class="badge-mes-deuda">Falta pagar: ${dinero(resumenM.deudaTotal)}</span>` : ""}
+      </div>
+    `;
+    header.onclick = () => {
+      const seraAbierto = !mesesCalendarioAbiertos[mKey];
+      if(seraAbierto){
+        minimizarOtrosMesesExcepto(mKey);
+      } else {
+        mesesCalendarioAbiertos[mKey] = false;
+      }
+      renderHistorialYResumenMensual();
+    };
+
+    bloque.appendChild(header);
+
+    if(estaAbierto){
+      bloque.appendChild(construirCalendarioCompactoMes(mKey, fechasMes));
+    }
+
+    contenedorHistorial.appendChild(bloque);
+  });
+}
+
+window.abrirModalDeudores = function(){
+  if($("filtroAlcanceDeudores")) $("filtroAlcanceDeudores").value = "mes";
+  if($("buscarDeudorInput")) $("buscarDeudorInput").value = "";
+  renderListaDeudoresModal();
+  $("modalDeudores").style.display = "flex";
+};
+
+window.cerrarModalDeudores = function(){
+  $("modalDeudores").style.display = "none";
+};
+
+function obtenerDeudoresFiltradosModal(){
+  const alcance = ($("filtroAlcanceDeudores") && $("filtroAlcanceDeudores").value) || "mes";
+  const q = String(($("buscarDeudorInput") && $("buscarDeudorInput").value) || "").trim().toLowerCase();
+  const mesRef = obtenerMesReferenciaResumen();
+  const base = calcularResumenYDeudores(alcance === "mes" ? mesRef : null);
+
+  const filtrados = base.listaDeudores.filter(item => {
+    if(!q) return true;
+    const texto = `${item.cliente} ${item.fechaFmt} ${item.productosTxt} ${item.observacion}`.toLowerCase();
+    return texto.includes(q);
+  });
+
+  const totalFiltrado = filtrados.reduce((s, x) => s + x.falta, 0);
+  return {
+    alcance,
+    mesRef,
+    lista: filtrados,
+    totalFiltrado: Number(totalFiltrado.toFixed(2))
+  };
+}
+
+window.renderListaDeudoresModal = function(){
+  const cont = $("listaDeudoresContainer");
+  const sub = $("subtituloModalDeudores");
+  if(!cont) return;
+
+  const { alcance, mesRef, lista, totalFiltrado } = obtenerDeudoresFiltradosModal();
+  const tituloPeriodo = alcance === "mes" ? formatearNombreMesAnio(mesRef) : "Todos los meses";
+
+  if(sub){
+    sub.textContent = `${tituloPeriodo} · Total por cobrar: ${dinero(totalFiltrado)} (${lista.length} pedido${lista.length === 1 ? "" : "s"} con deuda)`;
+  }
+
+  if(!lista.length){
+    cont.innerHTML = `<p class="muted" style="margin:6px;">No hay clientes con deuda en este período.</p>`;
+    return;
+  }
+
+  cont.innerHTML = lista.map(item => `
+    <div class="deudor-item-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;">
+        <div>
+          <strong style="font-size:14px;color:#0f172a;">📅 ${esc(item.fechaFmt)} · Pedido #${item.numeroPedido} — ${esc(item.cliente)}</strong>
+          <div style="font-size:12px;color:#334155;margin-top:3px;">${esc(item.productosTxt)}</div>
+          <div style="font-size:12px;margin-top:4px;">
+            Total pedido: <strong>${dinero(item.totalPedido)}</strong> · Pagó: <strong>${dinero(item.pagado)}</strong> ·
+            <strong style="color:#b91c1c;">⚠️ Debe: ${dinero(item.falta)}</strong>
+          </div>
+          ${item.observacion ? `<div class="muted" style="font-size:11px;margin-top:2px;">Obs: ${esc(item.observacion)}</div>` : ""}
+        </div>
+        <button type="button" class="blue" style="padding:6px 10px;font-size:12px;min-height:34px;margin:0;" onclick="irADiaDeudor('${esc(item.fecha)}')">Ir al día</button>
+      </div>
+    </div>
+  `).join("");
+};
+
+window.irADiaDeudor = function(fecha){
+  cerrarModalDeudores();
+  $("fecha").value = fecha;
+  cancelarEdicion();
+  actualizar();
+};
+
+window.imprimirDeudoresDetalle = function(){
+  const { alcance, mesRef, lista, totalFiltrado } = obtenerDeudoresFiltradosModal();
+  if(!lista.length){
+    alert("No hay clientes con deuda para imprimir.");
+    return;
+  }
+
+  const tituloPeriodo = alcance === "mes" ? formatearNombreMesAnio(mesRef).toUpperCase() : "TODOS LOS MESES";
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;font-size:12px;width:100%;color:#000;line-height:1.4;">
+      <div style="text-align:center;margin-bottom:8px;">
+        <strong style="font-size:16px;">KIMSA RESTAURANTE</strong><br>
+        <span style="font-size:13px;">REPORTE DE CLIENTES QUE DEBEN</span><br>
+        <span>Período: ${esc(tituloPeriodo)}</span><br>
+        <span>Emitido: ${esc(fechaHoraActualStr())}</span>
+      </div>
+      <hr style="margin:6px 0;border:0.5px dashed #000;">
+      ${lista.map((item, idx) => `
+        <div style="margin:8px 0;">
+          <strong>${idx + 1}. ${esc(item.cliente)}</strong><br>
+          Fecha: ${esc(item.fechaFmt)} (Pedido #${item.numeroPedido})<br>
+          Detalle: ${esc(item.productosTxt)}<br>
+          Total: ${dinero(item.totalPedido)} | Pagó: ${dinero(item.pagado)}<br>
+          <strong>FALTA PAGAR (DEBE): ${dinero(item.falta)}</strong>
+          ${item.observacion ? `<br>Obs: ${esc(item.observacion)}` : ""}
+        </div>
+        <hr style="margin:6px 0;border:0.5px dashed #000;">
+      `).join("")}
+      <div style="text-align:right;font-size:14px;margin-top:8px;">
+        <strong>TOTAL POR COBRAR (${lista.length}): ${dinero(totalFiltrado)}</strong>
+      </div>
+    </div>
+  `;
+
+  mostrarConVistaPrevia(html);
+};
 
 window.imprimirPedido = function(id){
   const d = dia();
@@ -5581,10 +6585,19 @@ function esc(s){
   return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 }
 
-$("fecha").addEventListener("change", () => {
+$("fecha").addEventListener("change", async () => {
   cancelarEdicion();
   inicializadoPedidosTV = false;
   idsPedidosConocidosTV.clear();
+
+  const fechaSeleccionada = $("fecha").value;
+  const fechaRestaurada = fechaSeleccionada
+    ? restaurarFechaSiEstaEnPapelera(fechaSeleccionada)
+    : false;
+
+  if(fechaRestaurada){
+    await guardarDatos([fechaSeleccionada]);
+  }
   actualizar();
 });
 
