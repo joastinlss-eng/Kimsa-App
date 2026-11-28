@@ -3566,7 +3566,8 @@ function fusionarDispositivos(localDevs, remoteDevs){
   };
   if(Array.isArray(remoteDevs)){
     remoteDevs.forEach(d => {
-      if(d && d.deviceId !== deviceId){
+      // Se conserva también la entrada de este dispositivo si aquí sigue la sesión (por ejemplo, tras refrescar la página)
+      if(d && (d.deviceId !== deviceId || usuarioTieneSesionEnEsteDispositivo(d.usuario))){
         agregar(d);
       }
     });
@@ -3636,6 +3637,21 @@ function restaurarSesionGuardadaSiExiste(){
   usuarioActual = guardado;
   $("pantallaBloqueo").style.display = "none";
   $("lblUsuarioLogueado").textContent = "👤 " + usuarioActual.toUpperCase();
+  try{
+    if(!dispositivosConectados.some(dev => dev.deviceId === deviceId && String(dev.usuario || "").trim().toLowerCase() === guardado)){
+      dispositivosConectados.push({
+        deviceId,
+        sesionKey: `${guardado}_${deviceId}`,
+        tipo: deviceTipo,
+        usuario: guardado.charAt(0).toUpperCase() + guardado.slice(1),
+        desdeHora: "--",
+        desdeCompleto: "",
+        desdeTimestamp: 0, // si la nube trae la hora original de ingreso, esa tiene prioridad
+        fecha: ($("fecha") && $("fecha").value) || "",
+        restaurada: true
+      });
+    }
+  }catch(e){}
   return true;
 }
 
@@ -4753,6 +4769,9 @@ function obtenerTextoResponsables(d){
     : [];
   if(conectados.length > 0){
     return Array.from(new Set(conectados.map(u => u.toUpperCase()))).join(" - ");
+  }
+  if(typeof usuarioActual !== "undefined" && usuarioActual){
+    return String(usuarioActual).trim().toUpperCase();
   }
   return "Ninguno registrado";
 }
